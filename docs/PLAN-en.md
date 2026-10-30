@@ -80,14 +80,19 @@ Web download manager (torrents, magnets and direct links) built on .NET, with ar
 
 ```
 Kestry/
-├── PLAN.md
 ├── README.md
+├── AGENTS.md
 ├── Kestry.slnx
-├── design/
-│   └── kestrel/                       # Exported Kestrel design system specification (see §9.1)
+├── design/kestrel/                    # Kestrel design system export used by tests (see §9.1)
+├── docs/                              # Original plan (read-only reference)
+│   ├── PLAN-es.md
+│   ├── PLAN-en.md
+│   └── design/kestrel/                # Reference copy of the export
 ├── src/
 │   ├── Kestry.Server/
-│   │   ├── Program.cs                 # Composition, REST and SSE endpoints, static files
+│   │   ├── Program.cs                 # Composition, endpoints, static files
+│   │   ├── KestryOptions.cs           # Kestry:* configuration (§10)
+│   │   ├── ApiErrors.cs               # ErrorBody + ErrorCodes (only list of API error codes)
 │   │   ├── Aria2/
 │   │   │   ├── Aria2Locator.cs        # Finds aria2c or downloads it (Windows only, see §7)
 │   │   │   ├── Aria2ProcessManager.cs # IHostedService: launches/watches aria2c
@@ -95,39 +100,66 @@ Kestry/
 │   │   │   └── Aria2Models.cs         # aria2 DTOs (status, files, bittorrent)
 │   │   ├── Downloads/
 │   │   │   ├── DownloadService.cs     # Add, pause, resume, cancel, remove
+│   │   │   ├── DownloadEndpoints.cs   # REST endpoints
 │   │   │   ├── LinkParser.cs          # Textarea parsing and validation
-│   │   │   └── DownloadMonitor.cs     # BackgroundService: snapshot → SSE
+│   │   │   ├── PathGuard.cs           # AllowedRoots checks and path normalization
+│   │   │   ├── Snapshot.cs            # Snapshot DTOs
+│   │   │   ├── SnapshotMapper.cs      # aria2 status → snapshot row
+│   │   │   ├── SnapshotBuilder.cs     # One multicall → Snapshot
+│   │   │   ├── SnapshotHub.cs         # Latest snapshot + subscribers
+│   │   │   ├── DownloadMonitor.cs     # BackgroundService: polling → hub
+│   │   │   └── EventsEndpoint.cs      # SSE /api/events
 │   │   ├── Settings/
 │   │   │   ├── AppSettings.cs
-│   │   │   └── SettingsService.cs     # Reads/writes settings.json, applies to aria2
-│   │   ├── System/
-│   │   │   └── ShutdownService.cs     # Shutdown when finished (per OS)
-│   │   └── wwwroot/                   # Frontend build output
+│   │   │   ├── SettingsValidator.cs
+│   │   │   ├── SettingsService.cs     # Reads/writes settings.json, applies to aria2
+│   │   │   └── SettingsEndpoints.cs   # /api/settings, /api/system
+│   │   ├── Shutdown/                  # Not "System/": that namespace breaks System.*
+│   │   │   ├── ShutdownService.cs     # Countdown and condition
+│   │   │   ├── SystemPower.cs         # ISystemPower: real power-off command per OS
+│   │   │   └── ShutdownEndpoints.cs
+│   │   ├── Security/
+│   │   │   └── RequestGuard.cs        # Host/Origin checks on /api
+│   │   ├── Health/
+│   │   │   └── HealthCheck.cs         # --healthcheck flag for container probes
+│   │   ├── appsettings.json
+│   │   └── wwwroot/                   # Frontend build output (not versioned)
 │   └── kestry-web/
 │       ├── package.json
 │       ├── vite.config.ts
 │       └── src/
 │           ├── main.tsx
 │           ├── App.tsx                # Layout + theme class (light/dark) on <html>
-│           ├── strings.ts             # All visible texts (Spanish)
-│           ├── api/                   # REST client + EventSource
+│           ├── downloads.ts           # Filters, counters, snapshot diffing
+│           ├── settings.ts            # Settings model and limit units
+│           ├── theme.ts               # Light/dark/system preference
+│           ├── api/                   # REST client, error translation, useSnapshot (EventSource)
+│           ├── i18n/                  # config.ts, index.ts (useTranslations) and messages/{en,es,de,fr}.json
 │           ├── styles/
 │           │   └── tokens.css         # Hand-written from Kestrel's tokens.json: variables (light/dark) + @theme inline
 │           ├── pages/
 │           │   └── DownloadsPage.tsx
 │           └── components/
-│               ├── ui/                # Kestrel components (table in §9.4) and Icon
+│               ├── ui/                # Kestrel components (table in §9.4), Icon, Toaster
+│               ├── Header.tsx         # Logo, quick switches, settings, LocaleSwitcher
 │               ├── Sidebar.tsx        # NavItem filters, SpeedStat and aria2 status
 │               ├── DownloadsList.tsx  # DownloadItem rows
 │               ├── AddDownloadsModal.tsx
+│               ├── ConfirmDialog.tsx
 │               ├── SettingsDrawer.tsx
+│               ├── LocaleSwitcher.tsx
 │               └── ShutdownBanner.tsx
 ├── tests/
-│   └── Kestry.Server.Tests/           # xUnit: LinkParser, Settings, Shutdown + smoke test with real aria2
+│   └── Kestry.Server.Tests/           # xUnit: unit, endpoints (KestryFactory), Smoke/ with real aria2
 ├── docker/
 │   ├── Dockerfile
-│   └── docker-compose.yml             # Kestry + (optional) cloudflared
-└── .github/workflows/ci.yml
+│   ├── Dockerfile.dockerignore
+│   ├── docker-compose.yml             # Kestry + (optional) cloudflared
+│   └── .env.example
+├── deploy/                            # systemd unit + polkit rule for poweroff
+├── scripts/
+│   └── publish.sh                     # Self-contained zips into artifacts/
+└── .github/workflows/                 # ci.yml, release.yml
 ```
 
 ---
