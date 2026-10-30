@@ -1,6 +1,7 @@
 using Kestry.Server.Aria2;
 using Kestry.Server.Downloads;
 using Kestry.Server.Settings;
+using Kestry.Server.Shutdown;
 using Kestry.Server.Tests.Aria2;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -18,9 +19,11 @@ public class MonitorTests : IDisposable
 
     public MonitorTests()
     {
-        var options = Options.Create(new KestryOptions { DataDir = _root, AllowedRoots = [_root] });
-        var builder = new SnapshotBuilder(new FakeAria2().Client, _runtime, new SettingsService(options), NullLogger<SnapshotBuilder>.Instance);
-        _monitor = new DownloadMonitor(builder, _hub, _time, NullLogger<DownloadMonitor>.Instance);
+        var fake = new FakeAria2();
+        var settings = TestSettings.Create(_root, fake.Client, _runtime);
+        var shutdown = new ShutdownService(settings, TestSettings.Options(_root), new FakePower(), fake.Client, _runtime, _time, NullLogger<ShutdownService>.Instance, inContainer: false);
+        var builder = new SnapshotBuilder(fake.Client, _runtime, settings, shutdown, NullLogger<SnapshotBuilder>.Instance);
+        _monitor = new DownloadMonitor(builder, _hub, shutdown, settings, _runtime, _time, NullLogger<DownloadMonitor>.Instance);
     }
 
     public void Dispose()

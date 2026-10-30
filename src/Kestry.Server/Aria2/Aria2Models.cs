@@ -11,6 +11,9 @@ public sealed class Aria2Runtime
     public int Port { get; set; } = 6800;
     public string Secret { get; } = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
     public volatile Aria2State State = Aria2State.Down;
+
+    /// <summary>Set when the machine is powering off, so the watchdog does not restart aria2.</summary>
+    public volatile bool ShuttingDown;
     /// <summary>Stable code for the UI to localize (notFound, downloadFailed, checksumMismatch, portBusy, crashed).</summary>
     public string? ReasonCode { get; set; }
     public string? Reason { get; set; }

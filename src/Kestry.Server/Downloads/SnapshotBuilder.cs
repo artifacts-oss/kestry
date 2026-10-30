@@ -1,11 +1,12 @@
 using System.Text.Json;
 using Kestry.Server.Aria2;
 using Kestry.Server.Settings;
+using Kestry.Server.Shutdown;
 
 namespace Kestry.Server.Downloads;
 
 /// <summary>Queries aria2 once (a single system.multicall) and assembles the snapshot sent to the UI.</summary>
-public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, SettingsService settings, ILogger<SnapshotBuilder> log)
+public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, SettingsService settings, ShutdownService shutdown, ILogger<SnapshotBuilder> log)
 {
     private const int PageSize = 1000;
 
@@ -40,7 +41,7 @@ public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, Set
             downloads,
             new StatsDto(stat.DownloadSpeed, stat.UploadSpeed, FreeDiskBytes(settings.Current.DownloadDir)),
             new Aria2Dto(runtime.State.ToString().ToLowerInvariant(), runtime.ReasonCode, runtime.Reason),
-            Shutdown: null,
+            shutdown.SecondsRemaining,
             settings.Version);
     }
 

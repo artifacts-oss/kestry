@@ -42,19 +42,15 @@ public sealed class Aria2ProcessManager(
     {
         var s = settings.Current;
         var o = aria2.Value;
-        var limited = s.SpeedLimitEnabled;
         var args = new List<string>
         {
             "--enable-rpc", "--rpc-listen-all=false", $"--rpc-listen-port={runtime.Port}", $"--rpc-secret={runtime.Secret}",
-            $"--dir={s.DownloadDir}", $"--input-file={SessionFile}", $"--save-session={SessionFile}", "--save-session-interval=30",
-            "--continue=true", $"--max-concurrent-downloads={s.MaxConcurrentDownloads}",
-            $"--max-overall-download-limit={(limited ? s.DownloadLimitKBps : 0)}K",
-            $"--max-overall-upload-limit={(limited ? s.UploadLimitKBps : 0)}K",
-            "--follow-torrent=true", "--bt-save-metadata=true",
-            $"--seed-ratio={(s.SeedingEnabled ? s.SeedRatio.ToString("0.0#", System.Globalization.CultureInfo.InvariantCulture) : "0")}",
-            $"--listen-port={o.BtPort}", $"--dht-listen-port={o.BtPort}", "--enable-dht=true", "--bt-enable-lpd=true",
-            "--enable-peer-exchange=true", "--quiet=true",
+            $"--input-file={SessionFile}", $"--save-session={SessionFile}", "--save-session-interval=30", "--continue=true",
+            "--follow-torrent=true", "--bt-save-metadata=true", $"--listen-port={o.BtPort}", $"--dht-listen-port={o.BtPort}",
+            "--enable-dht=true", "--bt-enable-lpd=true", "--enable-peer-exchange=true", "--quiet=true",
         };
+        // Same options the UI changes at runtime, so a restart never drifts from the saved settings.
+        args.AddRange(SettingsService.ToAria2Options(s).Select(kv => $"--{kv.Key}={kv.Value}"));
         args.AddRange(o.ExtraArgs);
         return [.. args];
     }
@@ -103,6 +99,7 @@ public sealed class Aria2ProcessManager(
                 runtime.SetState(Aria2State.Down, "crashed", ex.Message);
             }
 
+            if (runtime.ShuttingDown) return;
             if (runtime.State != Aria2State.Down) runtime.SetState(Aria2State.Restarting);
             try
             {

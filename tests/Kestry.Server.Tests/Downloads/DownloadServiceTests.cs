@@ -15,8 +15,8 @@ public class DownloadServiceTests : IDisposable
 
     public DownloadServiceTests()
     {
-        var options = Options.Create(new KestryOptions { DataDir = Path.Combine(_root, "data"), AllowedRoots = [Path.Combine(_root, "downloads")] });
-        _service = new DownloadService(_aria2.Client, new SettingsService(options), options, NullLogger<DownloadService>.Instance);
+        var options = TestSettings.Options(_root);
+        _service = new DownloadService(_aria2.Client, TestSettings.Create(_root, _aria2.Client), options, NullLogger<DownloadService>.Instance);
     }
 
     public void Dispose() => Directory.Delete(_root, recursive: true);

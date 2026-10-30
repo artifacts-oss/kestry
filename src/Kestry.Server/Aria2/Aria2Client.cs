@@ -86,6 +86,9 @@ public sealed class Aria2Client(HttpClient http, Aria2Runtime runtime)
     public Task ChangeGlobalOptionAsync(IDictionary<string, string> options, CancellationToken ct = default) =>
         CallAsync(new("aria2.changeGlobalOption", options), ct);
 
+    public async Task<Dictionary<string, string>> GetGlobalOptionAsync(CancellationToken ct = default) =>
+        await CallAsync<Dictionary<string, string>>(new("aria2.getGlobalOption"), ct);
+
     public Task SaveSessionAsync(CancellationToken ct = default) => CallAsync(new("aria2.saveSession"), ct);
     public Task ShutdownAsync(CancellationToken ct = default) => CallAsync(new("aria2.shutdown"), ct);
 
