@@ -5,7 +5,7 @@ using Kestry.Server.Settings;
 namespace Kestry.Server.Downloads;
 
 /// <summary>Queries aria2 once (a single system.multicall) and assembles the snapshot sent to the UI.</summary>
-public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, SettingsService settings)
+public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, SettingsService settings, ILogger<SnapshotBuilder> log)
 {
     private const int PageSize = 1000;
 
@@ -32,6 +32,7 @@ public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, Set
             catch (Exception ex) when (ex is HttpRequestException or Aria2Exception or TaskCanceledException && !ct.IsCancellationRequested)
             {
                 // aria2 is restarting or busy; the next tick will recover. Report an empty list meanwhile.
+                log.LogWarning(ex, "Could not read downloads from aria2");
             }
         }
 

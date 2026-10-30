@@ -19,7 +19,7 @@ public class MonitorTests : IDisposable
     public MonitorTests()
     {
         var options = Options.Create(new KestryOptions { DataDir = _root, AllowedRoots = [_root] });
-        var builder = new SnapshotBuilder(new FakeAria2().Client, _runtime, new SettingsService(options));
+        var builder = new SnapshotBuilder(new FakeAria2().Client, _runtime, new SettingsService(options), NullLogger<SnapshotBuilder>.Instance);
         _monitor = new DownloadMonitor(builder, _hub, _time, NullLogger<DownloadMonitor>.Instance);
     }
 

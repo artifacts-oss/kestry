@@ -100,10 +100,25 @@ public class Aria2ClientTests
         Assert.Equal(2, results.Length);
         Assert.Equal("a", results[0][0].GetProperty("gid").GetString());
         Assert.Equal("5", results[1].GetProperty("downloadSpeed").GetString());
-        var calls = handler.Requests.Single().GetProperty("params")[1];
+        var top = handler.Requests.Single().GetProperty("params");
+        Assert.Equal(1, top.GetArrayLength()); // no token at the top level, aria2 would reject it
+        var calls = top[0];
         Assert.Equal("aria2.tellActive", calls[0].GetProperty("methodName").GetString());
         Assert.Equal($"token:{runtime.Secret}", calls[0].GetProperty("params")[0].GetString());
         Assert.Equal($"token:{runtime.Secret}", calls[1].GetProperty("params")[0].GetString());
+    }
+
+    [Fact]
+    public async Task TellActive_sends_the_keys_as_a_single_array_parameter()
+    {
+        var (client, handler, _) = Create(_ => Ok("[[[]]]"));
+
+        await client.MulticallAsync([Aria2Client.TellActive()]);
+
+        var inner = handler.Requests.Single().GetProperty("params")[0][0].GetProperty("params");
+        Assert.Equal(2, inner.GetArrayLength()); // token + keys array
+        Assert.Equal(System.Text.Json.JsonValueKind.Array, inner[1].ValueKind);
+        Assert.Contains("gid", inner[1].EnumerateArray().Select(k => k.GetString()));
     }
 
     [Fact]

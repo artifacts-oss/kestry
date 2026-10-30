@@ -24,7 +24,8 @@ public sealed class Aria2Client(HttpClient http, Aria2Runtime runtime)
         ["jsonrpc"] = "2.0",
         ["id"] = "kestry",
         ["method"] = call.Method,
-        ["params"] = JsonSerializer.SerializeToNode(call.Params.Prepend($"token:{runtime.Secret}"), Aria2Json.Options),
+        // system.multicall is the one method that takes no token itself: the token goes inside each sub-call.
+        ["params"] = JsonSerializer.SerializeToNode(call.Method == "system.multicall" ? call.Params : call.Params.Prepend($"token:{runtime.Secret}"), Aria2Json.Options),
     };
 
     private static void ThrowIfError(JsonElement error) =>
@@ -91,7 +92,8 @@ public sealed class Aria2Client(HttpClient http, Aria2Runtime runtime)
     public async Task<string> GetVersionAsync(CancellationToken ct = default) =>
         (await CallAsync(new("aria2.getVersion"), ct)).GetProperty("version").GetString() ?? "";
 
-    public static Call TellActive() => new("aria2.tellActive", StatusKeys);
+    // Wrapped in object[] on purpose: a bare string[] would be taken as the whole params array (array covariance).
+    public static Call TellActive() => new("aria2.tellActive", new object[] { StatusKeys });
     public static Call TellWaiting(int offset, int count) => new("aria2.tellWaiting", offset, count, StatusKeys);
     public static Call TellStopped(int offset, int count) => new("aria2.tellStopped", offset, count, StatusKeys);
     public static Call GlobalStat() => new("aria2.getGlobalStat");
