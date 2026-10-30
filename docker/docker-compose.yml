@@ -1,0 +1,30 @@
+# Usage (from this folder):  docker compose up -d
+# With a Cloudflare Tunnel:   docker compose --profile tunnel up -d   (see README)
+services:
+  kestry:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: kestry
+    restart: unless-stopped
+    # To match the owner of the mounted folders: user: "1000:1000"
+    ports:
+      - "127.0.0.1:8080:8080"   # the UI is only reachable from this machine unless you change this
+      - "6881:6881/tcp"         # BitTorrent and DHT: forward these on your router for better speeds
+      - "6881:6881/udp"
+    volumes:
+      - ./downloads:/downloads
+      - ./data:/data
+    environment:
+      # The public URL when published through a tunnel, e.g. https://kestry.example.com
+      Kestry__AllowedOrigins__0: ${KESTRY_PUBLIC_URL:-}
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: [tunnel]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?set CLOUDFLARE_TUNNEL_TOKEN in .env}
+    depends_on:
+      - kestry

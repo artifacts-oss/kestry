@@ -1,0 +1,9 @@
+// Lets the "kestry" user power the machine off, which "Shut down when finished" needs.
+// Install: sudo cp 50-kestry-poweroff.rules /etc/polkit-1/rules.d/
+polkit.addRule(function (action, subject) {
+  if (subject.user == "kestry" &&
+      (action.id == "org.freedesktop.login1.power-off" ||
+       action.id == "org.freedesktop.login1.power-off-multiple-sessions")) {
+    return polkit.Result.YES;
+  }
+});

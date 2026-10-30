@@ -7,3 +7,7 @@ src/kestry-web/dist/
 coverage/
 *.user
 .vs/
+artifacts/
+docker/.env
+docker/data/
+docker/downloads/

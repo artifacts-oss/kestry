@@ -1,0 +1,20 @@
+# Install: copy to /etc/systemd/system/kestry.service, adjust the paths and User, then
+#   sudo systemctl daemon-reload && sudo systemctl enable --now kestry
+[Unit]
+Description=Kestry download manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=kestry
+WorkingDirectory=/opt/kestry
+ExecStart=/opt/kestry/Kestry.Server
+Restart=on-failure
+RestartSec=5
+# Optional overrides (any setting can be given as an environment variable):
+#Environment=Urls=http://127.0.0.1:8080
+#Environment=Kestry__AllowedRoots__0=/srv/downloads
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+# Keep local build output out of the image build: stale obj/ would override the restore done inside it.
+**/bin/
+**/obj/
+**/node_modules/
+.git/
+Kestry/
+tests/
+**/data/
+artifacts/
