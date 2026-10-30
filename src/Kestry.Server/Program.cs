@@ -36,6 +36,7 @@ app.MapGet("/health", (Aria2Runtime aria2) => Results.Json(new
 
 app.MapDownloadEndpoints();
 app.MapEvents();
+app.MapSystem();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

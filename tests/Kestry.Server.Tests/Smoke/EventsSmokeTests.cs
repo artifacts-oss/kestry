@@ -51,3 +51,18 @@ public class EventsSmokeTests(KestryFactory factory) : IClassFixture<KestryFacto
         Assert.True(snapshot.TryGetProperty("settingsVersion", out _));
     }
 }
+
+public class SystemSmokeTests(KestryFactory factory) : IClassFixture<KestryFactory>
+{
+    [Aria2Fact]
+    public async Task System_reports_the_aria2_version_once_running()
+    {
+        var runtime = factory.Services.GetRequiredService<Aria2Runtime>();
+        for (var i = 0; i < 150 && runtime.State != Aria2State.Running; i++) await Task.Delay(100);
+
+        var system = await factory.CreateClient().GetFromJsonAsync<JsonElement>("/api/system");
+
+        Assert.Matches(@"^\d+\.\d+", system.GetProperty("aria2Version").GetString());
+        Assert.Matches(@"^\d+\.\d+\.\d+$", system.GetProperty("version").GetString());
+    }
+}
