@@ -3,7 +3,7 @@
 **/obj/
 **/node_modules/
 .git/
-Kestry/
+docs/
 tests/
 **/data/
 artifacts/
