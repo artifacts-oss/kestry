@@ -1,17 +1,24 @@
 using Kestry.Server;
 using Kestry.Server.Aria2;
 using Kestry.Server.Downloads;
+using Kestry.Server.Health;
 using Kestry.Server.Security;
 using Kestry.Server.Settings;
 using Kestry.Server.Shutdown;
 using Microsoft.Extensions.Options;
 
-var builder = WebApplication.CreateBuilder(args);
+if (args.Contains(HealthCheck.Flag)) return await HealthCheck.RunAsync(Environment.GetEnvironmentVariable("Urls"));
+
+// The content root is the executable's folder so wwwroot/ and appsettings.json are found however it is launched.
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory });
+builder.Host.UseWindowsService(); // no-op unless started by the Windows service manager
+builder.Host.UseSystemd(); // likewise for systemd's Type=notify
 
 // Requests are small JSON or a handful of .torrent files; anything bigger is refused early.
 builder.WebHost.ConfigureKestrel(k => k.Limits.MaxRequestBodySize = DownloadEndpoints.MaxRequestBytes);
 
 builder.Services.Configure<KestryOptions>(builder.Configuration.GetSection("Kestry"));
+builder.Services.PostConfigure<KestryOptions>(o => o.Normalize(AppContext.BaseDirectory));
 builder.Services.Configure<Aria2Options>(builder.Configuration.GetSection("Aria2"));
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<Aria2Runtime>();
@@ -62,6 +69,7 @@ app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+return 0;
 
 // Exposed so integration tests can use WebApplicationFactory<Program>.
 public partial class Program;

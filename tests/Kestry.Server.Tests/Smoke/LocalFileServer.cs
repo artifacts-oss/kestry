@@ -22,6 +22,7 @@ public sealed class LocalFileServer : IAsyncDisposable
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseUrls($"http://127.0.0.1:{port}");
         var app = builder.Build();
+        app.MapGet("/health", () => "ok");
         app.MapGet("/small.bin", () => Results.File(Small, "application/octet-stream"));
         app.MapGet("/slow.bin", async (HttpContext ctx) =>
         {

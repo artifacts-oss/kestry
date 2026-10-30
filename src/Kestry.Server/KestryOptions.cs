@@ -12,6 +12,9 @@ public sealed class KestryOptions
     /// <summary>Extra origins (e.g. the tunnel's domain) accepted on mutating requests.</summary>
     public string[] AllowedOrigins { get; set; } = [];
 
+    /// <summary>Relative paths are anchored to the executable, not the working directory (services start in System32).</summary>
+    public void Normalize(string baseDir) => DataDir = Path.GetFullPath(DataDir, baseDir);
+
     public static string DefaultDownloadDir =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "Kestry");
 
