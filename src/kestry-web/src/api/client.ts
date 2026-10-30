@@ -1,7 +1,7 @@
-import type { LinksResponse, SystemInfo, TorrentResult } from './types';
+import type { AppSettings, LinksResponse, SystemInfo, TorrentResult } from './types';
 
 export class ApiError extends Error {
-  constructor(message: string, public status: number) {
+  constructor(message: string, public status: number, public fieldErrors: Record<string, string> = {}) {
     super(message);
   }
 }
@@ -15,7 +15,7 @@ async function request<T>(method: string, url: string, body?: BodyInit | object)
   });
   if (!res.ok) {
     const data = await res.json().catch(() => null);
-    throw new ApiError(data?.error ?? res.statusText, res.status);
+    throw new ApiError(data?.error ?? res.statusText, res.status, data?.errors);
   }
   return res.status === 204 ? (undefined as T) : res.json();
 }
@@ -34,6 +34,9 @@ export const api = {
     if (paused) query.set('paused', 'true');
     return request<TorrentResult[]>('POST', `/api/downloads/torrents?${query}`, form);
   },
+  getSettings: () => request<AppSettings>('GET', '/api/settings'),
+  saveSettings: (settings: AppSettings) => request<AppSettings>('PUT', '/api/settings', settings),
+  cancelShutdown: () => request<void>('POST', '/api/shutdown/cancel'),
   pause: (gid: string) => request<void>('POST', `/api/downloads/${enc(gid)}/pause`),
   resume: (gid: string) => request<void>('POST', `/api/downloads/${enc(gid)}/resume`),
   retry: (gid: string) => request<{ gid: string }>('POST', `/api/downloads/${enc(gid)}/retry`),

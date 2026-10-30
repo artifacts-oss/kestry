@@ -1,24 +1,56 @@
 import { useEffect, useState } from 'react';
 import { api } from './api/client';
+import type { SystemInfo } from './api/types';
 import { useSnapshot } from './api/useSnapshot';
-import { ToastProvider } from './components/ui/Toaster';
+import { Header } from './components/Header';
+import { SettingsDrawer } from './components/SettingsDrawer';
+import { ToastProvider, useToast } from './components/ui/Toaster';
 import { DownloadsPage } from './pages/DownloadsPage';
+import { useSettings } from './settings';
+import { strings } from './strings';
 import { applyTheme, getThemePreference } from './theme';
 
-export function App() {
+function Shell() {
+  const toast = useToast();
   const { snapshot, connected } = useSnapshot();
-  const [aria2Version, setAria2Version] = useState<string | null>(null);
+  const { settings, save } = useSettings(snapshot?.settingsVersion);
+  const [system, setSystem] = useState<SystemInfo | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const state = snapshot?.aria2.state;
 
   useEffect(() => applyTheme(getThemePreference()), []);
-  // The version is only known once aria2 is up, so ask again whenever its state changes.
+  // The aria2 version is only known once it is up, so ask again whenever its state changes.
   useEffect(() => {
-    if (state === 'running') api.system().then((s) => setAria2Version(s.aria2Version)).catch(() => {});
+    if (state === 'running') api.system().then(setSystem).catch(() => {});
   }, [state]);
 
+  const saveSafely = async (next: Parameters<typeof save>[0]) => {
+    try {
+      return await save(next);
+    } catch {
+      toast({ tone: 'error', message: strings.settings.saveFailed });
+      return {};
+    }
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header
+        settings={settings}
+        shutdownAvailable={system?.shutdownAvailable ?? false}
+        onToggle={(patch) => settings && void saveSafely({ ...settings, ...patch })}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
+      <DownloadsPage snapshot={snapshot} connected={connected} aria2Version={system?.aria2Version ?? null} />
+      <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} settings={settings} system={system} onSave={saveSafely} />
+    </div>
+  );
+}
+
+export function App() {
   return (
     <ToastProvider>
-      <DownloadsPage snapshot={snapshot} connected={connected} aria2Version={aria2Version} />
+      <Shell />
     </ToastProvider>
   );
 }

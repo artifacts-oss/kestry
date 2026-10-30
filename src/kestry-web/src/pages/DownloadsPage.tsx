@@ -3,7 +3,7 @@ import { api } from '../api/client';
 import type { Download, Snapshot } from '../api/types';
 import { AddDownloadsModal } from '../components/AddDownloadsModal';
 import { ConfirmDialog, type Confirmation } from '../components/ConfirmDialog';
-import { Header } from '../components/Header';
+import { ShutdownBanner } from '../components/ShutdownBanner';
 import { DownloadsList } from '../components/DownloadsList';
 import { Sidebar } from '../components/Sidebar';
 import { Button } from '../components/ui/Button';
@@ -67,9 +67,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
   const { active, queued } = summarize(downloads);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <div className="flex flex-col flex-1 lg:flex-row">
+    <div className="flex flex-col flex-1 lg:flex-row">
       <Sidebar filter={filter} onFilter={setFilter} counts={countByFilter(downloads)} snapshot={snapshot} connected={connected} aria2Version={aria2Version} />
       <main className="flex flex-col flex-1 min-w-0 bg-surface-000">
         <Toolbar label={strings.toolbarLabel} className="flex-wrap">
@@ -80,6 +78,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
           <Button variant="primary" icon="plus" onClick={() => setAdding('')}>{strings.add.button}</Button>
         </Toolbar>
         <div className="flex flex-col gap-4 p-4 lg:px-12 lg:py-8">
+          <ShutdownBanner seconds={snapshot?.shutdown ?? null} onCancel={() => run(api.cancelShutdown, strings.shutdownBanner.cancelled)} />
           {downloads.length > 0 && <p className="m-0 text-body-sm text-ink-muted">{strings.summary(active, queued)}</p>}
           {downloads.length === 0 ? (
             <EmptyState
@@ -104,7 +103,6 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
           )}
         </div>
       </main>
-      </div>
       <AddDownloadsModal open={adding !== null} initialText={adding ?? ''} onClose={() => setAdding(null)} />
       <ConfirmDialog
         confirmation={confirmation}

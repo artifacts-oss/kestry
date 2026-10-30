@@ -35,6 +35,19 @@ export interface Snapshot {
 export interface SystemInfo {
   version: string;
   aria2Version: string | null;
+  shutdownAvailable: boolean;
+  shutdownUnavailableReason: 'disabled' | 'container' | 'unsupported' | null;
+}
+
+export interface AppSettings {
+  maxConcurrentDownloads: number;
+  speedLimitEnabled: boolean;
+  downloadLimitKBps: number;
+  uploadLimitKBps: number;
+  downloadDir: string;
+  shutdownWhenDone: boolean;
+  seedingEnabled: boolean;
+  seedRatio: number;
 }
 
 export type LinkState = 'valid' | 'duplicate' | 'invalid' | 'added';
