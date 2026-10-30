@@ -63,6 +63,7 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
     public async Task Pause_resume_and_cancel_through_the_REST_api()
     {
         var http = _factory.CreateClient();
+        Aria2Status? last = null;
         var gid = await Downloads.AddUriAsync($"{_files.BaseUrl}/slow.bin", subfolder: "slow");
         await WaitAsync(async () => (await Aria2.TellStatusAsync(gid)).CompletedLength > 0, "the download to start");
 
@@ -70,7 +71,8 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
         await WaitAsync(async () => (await Aria2.TellStatusAsync(gid)).Status == "paused", "pause");
 
         Assert.Equal(HttpStatusCode.NoContent, (await http.PostAsync($"/api/downloads/{gid}/resume", null)).StatusCode);
-        await WaitAsync(async () => (await Aria2.TellStatusAsync(gid)).Status == "active", "resume");
+        try { await WaitAsync(async () => (last = await Aria2.TellStatusAsync(gid)).Status == "active", "resume"); }
+        catch (TimeoutException) { throw new TimeoutException($"resume: last status {last?.Status} code {last?.ErrorCode} {last?.ErrorMessage}"); }
 
         var partial = Path.Combine(_factory.DownloadDir, "slow", "slow.bin");
         Assert.True(File.Exists(partial));

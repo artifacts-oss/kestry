@@ -1,11 +1,15 @@
 using Kestry.Server;
 using Kestry.Server.Aria2;
 using Kestry.Server.Downloads;
+using Kestry.Server.Security;
 using Kestry.Server.Settings;
 using Kestry.Server.Shutdown;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Requests are small JSON or a handful of .torrent files; anything bigger is refused early.
+builder.WebHost.ConfigureKestrel(k => k.Limits.MaxRequestBodySize = DownloadEndpoints.MaxRequestBytes);
 
 builder.Services.Configure<KestryOptions>(builder.Configuration.GetSection("Kestry"));
 builder.Services.Configure<Aria2Options>(builder.Configuration.GetSection("Aria2"));
@@ -39,6 +43,8 @@ builder.Services.AddSingleton<Aria2ProcessManager>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<Aria2ProcessManager>());
 
 var app = builder.Build();
+
+app.UseMiddleware<RequestGuard>();
 
 app.MapGet("/health", (Aria2Runtime aria2) => Results.Json(new
 {

@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Mvc;
 using Kestry.Server.Aria2;
 
 namespace Kestry.Server.Downloads;
 
 public static class DownloadEndpoints
 {
+    public const int MaxRequestBytes = 2 * 1024 * 1024;
     public const int MaxTorrentBytes = 2 * 1024 * 1024;
+    public const int MaxTorrentUploadBytes = 25 * 1024 * 1024;
     public const int MaxTorrentFiles = 50;
 
     public const int MaxLinksTextLength = 512 * 1024;
@@ -82,7 +85,7 @@ public static class DownloadEndpoints
                 }
             }
             return Results.Ok(results);
-        }).DisableAntiforgery();
+        }).DisableAntiforgery().WithMetadata(new RequestSizeLimitAttribute(MaxTorrentUploadBytes));
 
         api.MapPost("/{gid}/pause", async (string gid, DownloadService svc, CancellationToken ct) => { await svc.PauseAsync(gid, ct); return Results.NoContent(); });
         api.MapPost("/{gid}/resume", async (string gid, DownloadService svc, CancellationToken ct) => { await svc.ResumeAsync(gid, ct); return Results.NoContent(); });

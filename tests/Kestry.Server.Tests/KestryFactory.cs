@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 namespace Kestry.Server.Tests;
 
 /// <summary>Hosts Kestry with its data, downloads and aria2 ports isolated in a temp folder.</summary>
-public sealed class KestryFactory : WebApplicationFactory<Program>
+public class KestryFactory : WebApplicationFactory<Program>
 {
     private bool _stopped;
 
@@ -23,8 +23,10 @@ public sealed class KestryFactory : WebApplicationFactory<Program>
         return ((IPEndPoint)l.LocalEndpoint).Port;
     }
 
+    protected virtual IEnumerable<KeyValuePair<string, string?>> Extra => [];
+
     protected override void ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder builder) =>
-        builder.ConfigureAppConfiguration((_, cfg) => cfg.AddInMemoryCollection(new Dictionary<string, string?>
+        builder.ConfigureAppConfiguration((_, cfg) => cfg.AddInMemoryCollection(new Dictionary<string, string?>(Extra)
         {
             ["Kestry:DataDir"] = Path.Combine(Root, "data"),
             ["Kestry:AllowedRoots:0"] = DownloadDir,

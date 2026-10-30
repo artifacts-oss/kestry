@@ -28,7 +28,7 @@ public sealed class LocalFileServer : IAsyncDisposable
             // Honour "Range: bytes=N-" so aria2 can resume after a pause instead of failing on a full 200 reply.
             const long total = 50 * 1024 * 1024;
             long start = 0;
-            if (ctx.Request.Headers.Range.ToString() is { Length: > 0 } range && long.TryParse(range.Replace("bytes=", "").TrimEnd('-'), out start))
+            if (ctx.Request.Headers.Range.ToString() is { Length: > 0 } range && long.TryParse(range.Replace("bytes=", "").Split('-')[0], out start))
             {
                 ctx.Response.StatusCode = StatusCodes.Status206PartialContent;
                 ctx.Response.Headers.ContentRange = $"bytes {start}-{total - 1}/{total}";
