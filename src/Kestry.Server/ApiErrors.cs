@@ -10,6 +10,8 @@ public static class ErrorCodes
 {
     public const string HostNotAllowed = "request.hostNotAllowed";
     public const string OriginNotAllowed = "request.originNotAllowed";
+    /// <summary>Kestrel answers an oversized body with an empty 413 before our pipeline runs; the web client assigns this code to it.</summary>
+    public const string RequestTooLarge = "request.tooLarge";
     public const string LinksEmpty = "links.empty";
     public const string LinksTooLarge = "links.tooLarge";
     public const string LinksTooMany = "links.tooMany";

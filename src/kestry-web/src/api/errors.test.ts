@@ -22,24 +22,9 @@ describe('errorText', () => {
   });
 });
 
-describe('error codes shared with the backend', () => {
-  const backend = [
-    'request.hostNotAllowed', 'request.originNotAllowed', 'request.tooLarge',
-    'links.empty', 'links.tooLarge', 'links.tooMany',
-    'torrents.count', 'torrents.tooLarge', 'torrents.invalid',
-    'downloads.invalidSubfolder', 'downloads.noSource', 'downloads.notFound',
-    'aria2.error', 'aria2.unavailable',
-    'settings.invalid', 'settings.maxConcurrentDownloads.range', 'settings.limit.min', 'settings.seedRatio.range',
-    'settings.downloadDir.notAbsolute', 'settings.downloadDir.outsideRoots', 'settings.downloadDir.notWritable',
-    'settings.shutdownWhenDone.unavailable',
-  ];
-
-  it.each(locales)('%s translates every code the API can return', (locale) => {
-    const t = createTranslator(locale, 'Errors');
-    for (const code of backend) expect(t.has(code), `${locale}:${code}`).toBe(true);
-  });
-
-  it('covers aria2 exit codes 1-30 and 32 in every language', () => {
+// The API's own codes are checked against the backend's ErrorCodes by ErrorCodesTests.cs (xUnit).
+describe('aria2 exit codes', () => {
+  it('are translated for 1-30 and 32 in every language', () => {
     for (const locale of locales) {
       const keys = Object.keys(messages[locale].Aria2Errors).map(Number).sort((a, b) => a - b);
       expect(keys).toEqual([...Array.from({ length: 30 }, (_, i) => i + 1), 32]);
