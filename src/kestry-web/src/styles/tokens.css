@@ -1,4 +1,4 @@
-/* Generated once from design/kestrel/tokens.json (Kestrel v1); edit by hand afterwards. */
+/* Derived from design/kestrel/tokens.json (Kestrel v1). */
 @import "tailwindcss";
 
 :root {
@@ -87,6 +87,40 @@
   --radius-lg: 20px;
   --radius-full: 9999px;
   --shadow-soft: var(--kestrel-shadow-soft);
+}
+
+@theme {
+  --text-*: initial;
+  --text-display: 56px;
+  --text-display--line-height: 60px;
+  --text-display--font-weight: 400;
+  --text-display--letter-spacing: -0.02em;
+  --text-heading-1: 36px;
+  --text-heading-1--line-height: 44px;
+  --text-heading-1--font-weight: 500;
+  --text-heading-1--letter-spacing: -0.01em;
+  --text-heading-2: 22px;
+  --text-heading-2--line-height: 30px;
+  --text-heading-2--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 22px;
+  --text-label: 13px;
+  --text-label--line-height: 16px;
+  --text-label--font-weight: 600;
+  --text-label--letter-spacing: 0.02em;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--font-weight: 500;
+  --text-caption--letter-spacing: 0.04em;
+  --text-mono: 13px;
+  --text-mono--line-height: 20px;
+  --animate-slide: slide 1.4s ease-in-out infinite;
+  @keyframes slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(340%); }
+  }
 }
 
 @layer base {
