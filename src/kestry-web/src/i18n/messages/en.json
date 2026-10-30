@@ -1,0 +1,153 @@
+{
+  "App": { "name": "Kestry" },
+  "Status": {
+    "downloading": "Downloading",
+    "queued": "Queued",
+    "paused": "Paused",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "Download": {
+    "progress": "Progress of {name}",
+    "fetchingMetadata": "Fetching metadata…",
+    "waiting": "Waiting",
+    "failed": "The download failed",
+    "sizeOf": "{done} of {total}",
+    "peers": "{connections, plural, one {# connection} other {# connections}} · {seeders, plural, one {# seed} other {# seeds}}"
+  },
+  "Eta": {
+    "seconds": "{n} s left",
+    "minutes": "{n} min left",
+    "hoursMinutes": "{h} h {m} min left"
+  },
+  "Actions": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "remove": "Remove",
+    "copyPath": "Copy path",
+    "more": "More actions",
+    "close": "Close",
+    "dismiss": "Dismiss"
+  },
+  "FileDrop": {
+    "prompt": "Drop .torrent files here or click to choose them",
+    "selected": "{count, plural, one {# file selected} other {# files selected}}"
+  },
+  "Filters": {
+    "label": "Filters",
+    "all": "All",
+    "downloading": "Downloading",
+    "queued": "Queued",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "Dashboard": {
+    "toolbar": "Downloads",
+    "search": "Search by name",
+    "pauseAll": "Pause all",
+    "resumeAll": "Resume all",
+    "summary": "{active} running · {queued} queued",
+    "noResults": "No download matches the filter",
+    "emptyTitle": "No downloads yet",
+    "emptyDescription": "Paste HTTP or FTP links, magnets or addresses of .torrent files."
+  },
+  "Stats": { "download": "Download", "upload": "Upload", "freeDisk": "Free space" },
+  "Connection": {
+    "connected": "aria2 {version} connected",
+    "installing": "Installing aria2…",
+    "restarting": "Reconnecting to aria2…",
+    "down": "aria2 is not responding",
+    "offline": "No connection to Kestry"
+  },
+  "Aria2Reasons": {
+    "notFound": "Install aria2 (apt install aria2, dnf install aria2…) or set its path in Aria2:Path.",
+    "downloadFailed": "aria2 could not be downloaded. Copy aria2c.exe to the data folder or set its path in Aria2:Path.",
+    "checksumMismatch": "The downloaded aria2 file does not match the expected hash and was discarded.",
+    "portBusy": "aria2's RPC port is in use. Free it or change Aria2:Port.",
+    "crashed": "aria2 closed unexpectedly."
+  },
+  "Confirm": {
+    "cancelTitle": "Cancel download",
+    "cancelBody": "“{name}” will be stopped and its partial files deleted.",
+    "cancelYes": "Cancel download",
+    "cancelNo": "Back",
+    "removeTitle": "Remove from the list",
+    "removeBody": "“{name}” will be removed from the list.",
+    "removeFiles": "Also delete the files",
+    "removeYes": "Remove"
+  },
+  "Toasts": {
+    "completed": "Download completed: {name}",
+    "failed": "Download failed: {name}",
+    "added": "{count, plural, one {# download added} other {# downloads added}}",
+    "pathCopied": "Path copied",
+    "retried": "Download retried",
+    "removed": "Download removed",
+    "cancelled": "Download cancelled",
+    "requestFailed": "The action could not be completed"
+  },
+  "Add": {
+    "button": "Add",
+    "title": "Add downloads",
+    "linksLabel": "Links",
+    "linksPlaceholder": "https://…\nmagnet:?xt=urn:btih:…\nhttps://…/file.torrent",
+    "linksHint": "One per line. HTTP, HTTPS, FTP, magnets and addresses of .torrent files are accepted.",
+    "advanced": "Advanced options",
+    "subfolder": "Destination subfolder",
+    "subfolderHint": "Relative to the downloads folder",
+    "paused": "Add paused",
+    "valid": "{count, plural, one {# valid} other {# valid}}",
+    "duplicates": "{count, plural, one {# duplicate} other {# duplicates}}",
+    "invalid": "{count, plural, one {# invalid} other {# invalid}}",
+    "invalidList": "These will not be added:",
+    "submit": "Add",
+    "cancel": "Cancel",
+    "pasteHere": "Paste your links here"
+  },
+  "Header": {
+    "speedLimit": "Speed limit",
+    "shutdown": "Shut down when finished",
+    "settings": "Settings"
+  },
+  "Settings": {
+    "title": "Settings",
+    "maxConcurrent": "Simultaneous downloads",
+    "speedLimit": "Speed limit enabled",
+    "downloadLimit": "Download limit",
+    "uploadLimit": "Upload limit (torrents)",
+    "unit": "Unit",
+    "downloadDir": "Downloads folder",
+    "downloadDirHint": "Only affects new downloads",
+    "shutdown": "Shut down when everything finishes",
+    "shutdownUnavailable": {
+      "disabled": "The administrator has disabled shutting down on this server.",
+      "container": "Not available: Kestry runs in a container and cannot power off the machine.",
+      "unsupported": "Not available on this operating system."
+    },
+    "seeding": "Keep sharing torrents when they finish",
+    "seedRatio": "Share ratio",
+    "theme": "Theme",
+    "themes": { "light": "Light", "dark": "Dark", "system": "System" },
+    "saveFailed": "The settings could not be saved",
+    "errors": {
+      "maxConcurrentDownloads": "Must be between 1 and 20",
+      "downloadLimitKBps": "Must be at least 1 KB/s",
+      "uploadLimitKBps": "Must be at least 1 KB/s",
+      "seedRatio": "Must be between 0.1 and 100",
+      "downloadDir": "Must be an absolute path inside the allowed folders and writable",
+      "shutdownWhenDone": "Shutting down is not available on this server"
+    }
+  },
+  "ShutdownBanner": {
+    "message": "The machine will shut down in {seconds} s",
+    "cancel": "Cancel shutdown",
+    "cancelled": "Shutdown cancelled"
+  },
+  "LocaleSwitcher": {
+    "title": "Choose language",
+    "trigger": "Switch language",
+    "options": { "en": "English", "es": "Spanish", "de": "German", "fr": "French" }
+  }
+}

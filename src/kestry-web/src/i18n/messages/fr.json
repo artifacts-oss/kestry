@@ -1,0 +1,153 @@
+{
+  "App": { "name": "Kestry" },
+  "Status": {
+    "downloading": "Téléchargement",
+    "queued": "En attente",
+    "paused": "En pause",
+    "completed": "Terminé",
+    "failed": "Erreur"
+  },
+  "Download": {
+    "progress": "Progression de {name}",
+    "fetchingMetadata": "Récupération des métadonnées…",
+    "waiting": "En attente",
+    "failed": "Le téléchargement a échoué",
+    "sizeOf": "{done} sur {total}",
+    "peers": "{connections, plural, one {# connexion} other {# connexions}} · {seeders, plural, one {# seed} other {# seeds}}"
+  },
+  "Eta": {
+    "seconds": "{n} s restantes",
+    "minutes": "{n} min restantes",
+    "hoursMinutes": "{h} h {m} min restantes"
+  },
+  "Actions": {
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "cancel": "Annuler",
+    "retry": "Réessayer",
+    "remove": "Supprimer",
+    "copyPath": "Copier le chemin",
+    "more": "Plus d'actions",
+    "close": "Fermer",
+    "dismiss": "Ignorer"
+  },
+  "FileDrop": {
+    "prompt": "Déposez des fichiers .torrent ici ou cliquez pour les choisir",
+    "selected": "{count, plural, one {# fichier sélectionné} other {# fichiers sélectionnés}}"
+  },
+  "Filters": {
+    "label": "Filtres",
+    "all": "Tous",
+    "downloading": "Téléchargement",
+    "queued": "En attente",
+    "completed": "Terminés",
+    "failed": "Erreur"
+  },
+  "Dashboard": {
+    "toolbar": "Téléchargements",
+    "search": "Rechercher par nom",
+    "pauseAll": "Tout mettre en pause",
+    "resumeAll": "Tout reprendre",
+    "summary": "{active} en cours · {queued} en attente",
+    "noResults": "Aucun téléchargement ne correspond au filtre",
+    "emptyTitle": "Aucun téléchargement pour l'instant",
+    "emptyDescription": "Collez des liens HTTP ou FTP, des magnets ou des adresses de fichiers .torrent."
+  },
+  "Stats": { "download": "Réception", "upload": "Envoi", "freeDisk": "Espace libre" },
+  "Connection": {
+    "connected": "aria2 {version} connecté",
+    "installing": "Installation d'aria2…",
+    "restarting": "Reconnexion à aria2…",
+    "down": "aria2 ne répond pas",
+    "offline": "Pas de connexion à Kestry"
+  },
+  "Aria2Reasons": {
+    "notFound": "Installez aria2 (apt install aria2, dnf install aria2…) ou indiquez son chemin dans Aria2:Path.",
+    "downloadFailed": "aria2 n'a pas pu être téléchargé. Copiez aria2c.exe dans le dossier de données ou indiquez son chemin dans Aria2:Path.",
+    "checksumMismatch": "Le fichier aria2 téléchargé ne correspond pas au hachage attendu et a été écarté.",
+    "portBusy": "Le port RPC d'aria2 est occupé. Libérez-le ou modifiez Aria2:Port.",
+    "crashed": "aria2 s'est fermé de façon inattendue."
+  },
+  "Confirm": {
+    "cancelTitle": "Annuler le téléchargement",
+    "cancelBody": "« {name} » sera arrêté et ses fichiers partiels supprimés.",
+    "cancelYes": "Annuler le téléchargement",
+    "cancelNo": "Retour",
+    "removeTitle": "Supprimer de la liste",
+    "removeBody": "« {name} » sera retiré de la liste.",
+    "removeFiles": "Supprimer aussi les fichiers",
+    "removeYes": "Supprimer"
+  },
+  "Toasts": {
+    "completed": "Téléchargement terminé : {name}",
+    "failed": "Échec : {name}",
+    "added": "{count, plural, one {# téléchargement ajouté} other {# téléchargements ajoutés}}",
+    "pathCopied": "Chemin copié",
+    "retried": "Téléchargement relancé",
+    "removed": "Téléchargement supprimé",
+    "cancelled": "Téléchargement annulé",
+    "requestFailed": "L'action n'a pas pu être effectuée"
+  },
+  "Add": {
+    "button": "Ajouter",
+    "title": "Ajouter des téléchargements",
+    "linksLabel": "Liens",
+    "linksPlaceholder": "https://…\nmagnet:?xt=urn:btih:…\nhttps://…/fichier.torrent",
+    "linksHint": "Un par ligne. Les liens HTTP, HTTPS, FTP, les magnets et les adresses de fichiers .torrent sont acceptés.",
+    "advanced": "Options avancées",
+    "subfolder": "Sous-dossier de destination",
+    "subfolderHint": "Relatif au dossier de téléchargements",
+    "paused": "Ajouter en pause",
+    "valid": "{count, plural, one {# valide} other {# valides}}",
+    "duplicates": "{count, plural, one {# doublon} other {# doublons}}",
+    "invalid": "{count, plural, one {# invalide} other {# invalides}}",
+    "invalidList": "Ceux-ci ne seront pas ajoutés :",
+    "submit": "Ajouter",
+    "cancel": "Annuler",
+    "pasteHere": "Collez vos liens ici"
+  },
+  "Header": {
+    "speedLimit": "Limite de vitesse",
+    "shutdown": "Éteindre à la fin",
+    "settings": "Réglages"
+  },
+  "Settings": {
+    "title": "Réglages",
+    "maxConcurrent": "Téléchargements simultanés",
+    "speedLimit": "Limite de vitesse activée",
+    "downloadLimit": "Limite de réception",
+    "uploadLimit": "Limite d'envoi (torrents)",
+    "unit": "Unité",
+    "downloadDir": "Dossier de téléchargements",
+    "downloadDirHint": "N'affecte que les nouveaux téléchargements",
+    "shutdown": "Éteindre quand tout est terminé",
+    "shutdownUnavailable": {
+      "disabled": "L'administrateur a désactivé l'extinction sur ce serveur.",
+      "container": "Indisponible : Kestry s'exécute dans un conteneur et ne peut pas éteindre la machine.",
+      "unsupported": "Indisponible sur ce système d'exploitation."
+    },
+    "seeding": "Continuer à partager les torrents une fois terminés",
+    "seedRatio": "Ratio de partage",
+    "theme": "Thème",
+    "themes": { "light": "Clair", "dark": "Sombre", "system": "Système" },
+    "saveFailed": "Les réglages n'ont pas pu être enregistrés",
+    "errors": {
+      "maxConcurrentDownloads": "Doit être compris entre 1 et 20",
+      "downloadLimitKBps": "Doit être d'au moins 1 KB/s",
+      "uploadLimitKBps": "Doit être d'au moins 1 KB/s",
+      "seedRatio": "Doit être compris entre 0,1 et 100",
+      "downloadDir": "Doit être un chemin absolu dans les dossiers autorisés, avec droit d'écriture",
+      "shutdownWhenDone": "L'extinction n'est pas disponible sur ce serveur"
+    }
+  },
+  "ShutdownBanner": {
+    "message": "La machine s'éteindra dans {seconds} s",
+    "cancel": "Annuler l'extinction",
+    "cancelled": "Extinction annulée"
+  },
+  "LocaleSwitcher": {
+    "title": "Choisir la langue",
+    "trigger": "Changer de langue",
+    "options": { "en": "Anglais", "es": "Espagnol", "de": "Allemand", "fr": "Français" }
+  }
+}
