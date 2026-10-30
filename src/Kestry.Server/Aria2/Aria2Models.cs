@@ -11,8 +11,16 @@ public sealed class Aria2Runtime
     public int Port { get; set; } = 6800;
     public string Secret { get; } = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
     public volatile Aria2State State = Aria2State.Down;
+    /// <summary>Stable code for the UI to localize (notFound, downloadFailed, checksumMismatch, portBusy, crashed).</summary>
+    public string? ReasonCode { get; set; }
     public string? Reason { get; set; }
     public string? Version { get; set; }
+
+    public void SetState(Aria2State state, string? reasonCode = null, string? reason = null)
+    {
+        (State, ReasonCode, Reason) = (state, reasonCode, reason);
+        if (state != Aria2State.Running) Version = null;
+    }
 }
 
 public sealed class Aria2Exception(int code, string message) : Exception(message)
