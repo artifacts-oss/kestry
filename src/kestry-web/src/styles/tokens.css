@@ -1,5 +1,6 @@
 /* Derived from design/kestrel/tokens.json (Kestrel v1). */
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --surface-000: #faf7f2;
