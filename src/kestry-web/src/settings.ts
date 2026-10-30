@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api, ApiError } from './api/client';
-import type { AppSettings } from './api/types';
+import type { AppSettings, ErrorBody } from './api/types';
 
 export type LimitUnit = 'KB' | 'MB';
 
@@ -23,12 +23,12 @@ export function useSettings(settingsVersion: number | undefined) {
     api.getSettings().then(setSettings).catch(() => {});
   }, [settingsVersion]);
 
-  const save = useCallback(async (next: AppSettings): Promise<Record<string, string>> => {
+  const save = useCallback(async (next: AppSettings): Promise<Record<string, ErrorBody>> => {
     try {
       setSettings(await api.saveSettings(next));
       return {};
     } catch (e) {
-      if (e instanceof ApiError && e.fieldErrors) return e.fieldErrors;
+      if (e instanceof ApiError && Object.keys(e.fieldErrors).length > 0) return e.fieldErrors;
       throw e;
     }
   }, []);

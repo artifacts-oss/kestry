@@ -1,7 +1,13 @@
-import type { AppSettings, LinksResponse, SystemInfo, TorrentResult } from './types';
+import type { AppSettings, ErrorBody, LinksResponse, SystemInfo, TorrentResult } from './types';
 
 export class ApiError extends Error {
-  constructor(message: string, public status: number, public fieldErrors: Record<string, string> = {}) {
+  constructor(
+    message: string,
+    public status: number,
+    public code?: string,
+    public params?: ErrorBody['params'],
+    public fieldErrors: Record<string, ErrorBody> = {},
+  ) {
     super(message);
   }
 }
@@ -15,7 +21,9 @@ async function request<T>(method: string, url: string, body?: BodyInit | object)
   });
   if (!res.ok) {
     const data = await res.json().catch(() => null);
-    throw new ApiError(data?.error ?? res.statusText, res.status, data?.errors);
+    // Kestrel answers an oversized body with an empty 413, so that one has no code of its own.
+    const code = data?.code ?? (res.status === 413 ? 'request.tooLarge' : undefined);
+    throw new ApiError(data?.error ?? res.statusText, res.status, code, data?.params, data?.errors);
   }
   return res.status === 204 ? (undefined as T) : res.json();
 }

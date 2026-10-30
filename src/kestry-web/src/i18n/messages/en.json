@@ -130,20 +130,91 @@
     "seedRatio": "Share ratio",
     "theme": "Theme",
     "themes": { "light": "Light", "dark": "Dark", "system": "System" },
-    "saveFailed": "The settings could not be saved",
-    "errors": {
-      "maxConcurrentDownloads": "Must be between 1 and 20",
-      "downloadLimitKBps": "Must be at least 1 KB/s",
-      "uploadLimitKBps": "Must be at least 1 KB/s",
-      "seedRatio": "Must be between 0.1 and 100",
-      "downloadDir": "Must be an absolute path inside the allowed folders and writable",
-      "shutdownWhenDone": "Shutting down is not available on this server"
-    }
+    "saveFailed": "The settings could not be saved"
   },
   "ShutdownBanner": {
     "message": "The machine will shut down in {seconds} s",
     "cancel": "Cancel shutdown",
     "cancelled": "Shutdown cancelled"
+  },
+  "Errors": {
+    "request": {
+      "hostNotAllowed": "This address is not allowed. Add its origin to Kestry:AllowedOrigins.",
+      "originNotAllowed": "This origin is not allowed. Add it to Kestry:AllowedOrigins.",
+      "tooLarge": "The request is too large."
+    },
+    "links": {
+      "empty": "Paste at least one link.",
+      "tooLarge": "The pasted text is too large.",
+      "tooMany": "At most {max} links per request."
+    },
+    "torrents": {
+      "count": "Send between 1 and {max} .torrent files.",
+      "tooLarge": "Only .torrent files up to {maxMb} MB are accepted.",
+      "invalid": "This is not a valid .torrent file."
+    },
+    "downloads": {
+      "invalidSubfolder": "The subfolder must be relative and stay inside the downloads folder.",
+      "noSource": "This download has no source to retry from.",
+      "notFound": "The download no longer exists."
+    },
+    "aria2": {
+      "error": "aria2 reported an error: {message}",
+      "unavailable": "aria2 is not available right now."
+    },
+    "settings": {
+      "invalid": "The settings are not valid.",
+      "maxConcurrentDownloads": {
+        "range": "Must be between 1 and 20"
+      },
+      "limit": {
+        "min": "Must be at least 1 KB/s"
+      },
+      "seedRatio": {
+        "range": "Must be between 0.1 and 100"
+      },
+      "downloadDir": {
+        "notAbsolute": "Must be an absolute path",
+        "outsideRoots": "Must be inside one of the allowed folders",
+        "notWritable": "The folder cannot be created or is not writable"
+      },
+      "shutdownWhenDone": {
+        "unavailable": "Shutting down is not available on this server"
+      }
+    }
+  },
+  "Aria2Errors": {
+    "1": "Unknown error",
+    "2": "The connection timed out",
+    "3": "The resource was not found",
+    "4": "Too many \"not found\" responses; aria2 gave up",
+    "5": "The download speed was too slow",
+    "6": "A network problem occurred",
+    "7": "Unfinished downloads remained when aria2 exited",
+    "8": "The server does not support resuming",
+    "9": "Not enough disk space",
+    "10": "The piece length differs from the existing control file",
+    "11": "The same file is already being downloaded",
+    "12": "The same torrent is already being downloaded",
+    "13": "The file already exists",
+    "14": "Renaming the file failed",
+    "15": "The existing file could not be opened",
+    "16": "The file could not be created or truncated",
+    "17": "File read/write error",
+    "18": "The folder could not be created",
+    "19": "Name resolution failed",
+    "20": "The Metalink document could not be parsed",
+    "21": "The FTP command failed",
+    "22": "Unexpected HTTP response",
+    "23": "Too many redirects",
+    "24": "HTTP authorization failed",
+    "25": "The bencoded data could not be parsed",
+    "26": "The .torrent file is corrupted or incomplete",
+    "27": "The magnet link is invalid",
+    "28": "Invalid option",
+    "29": "The remote server is overloaded",
+    "30": "The JSON-RPC request could not be parsed",
+    "32": "Checksum validation failed"
   },
   "LocaleSwitcher": {
     "title": "Choose language",

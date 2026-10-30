@@ -74,10 +74,10 @@ describe('createTranslator', () => {
   });
 
   it('reads nested keys and reports whether a key exists', () => {
-    const t = createTranslator('en', 'Settings');
-    expect(t('errors.downloadDir')).toMatch(/absolute path/);
-    expect(t.has('errors.downloadDir')).toBe(true);
-    expect(t.has('errors.nope')).toBe(false);
+    const t = createTranslator('en', 'Errors');
+    expect(t('settings.downloadDir.notAbsolute')).toMatch(/absolute path/);
+    expect(t.has('settings.downloadDir.notAbsolute')).toBe(true);
+    expect(t.has('settings.downloadDir.nope')).toBe(false);
   });
 
   it('falls back to the key when nothing matches', () => {

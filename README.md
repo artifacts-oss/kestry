@@ -115,6 +115,8 @@ See [AGENTS.md](AGENTS.md) for the architecture, conventions and pitfalls. CI (`
 | `GET` | `/api/events` | SSE, one `snapshot` event per second |
 | `GET` | `/health` | Health including aria2 state |
 
+Errors are JSON `{ "code": "links.tooMany", "error": "English text", "params": { "max": 2000 } }` (settings add `errors` keyed by field). Clients should rely on `code`; the web UI translates it.
+
 ## Limits (v1)
 
 No users/permissions, torrent search/RSS, streaming, `sftp://` links, queue reordering, bulk selection or per-download detail panel. The ideas for later are listed in `Kestry/PLAN.md` §15.

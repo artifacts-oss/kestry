@@ -3,7 +3,7 @@ import { countByFilter, diffSnapshots, filterDownloads, summarize } from './down
 
 const d = (gid: string, status: Download['status'], extra: Partial<Download> = {}): Download => ({
   gid, name: `${gid}.bin`, path: `/d/${gid}.bin`, status, source: 'https', fileType: 'file', size: 1, downloaded: 0, speed: 0,
-  uploadSpeed: 0, eta: null, connections: 0, seeders: 0, fetchingMetadata: false, seeding: false, error: null, ...extra,
+  uploadSpeed: 0, eta: null, connections: 0, seeders: 0, fetchingMetadata: false, seeding: false, errorCode: 0, error: null, ...extra,
 });
 
 const list = [d('a', 'downloading'), d('b', 'queued'), d('c', 'paused'), d('d', 'completed'), d('e', 'failed')];

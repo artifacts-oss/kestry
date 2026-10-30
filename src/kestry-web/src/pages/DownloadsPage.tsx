@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client';
+import { errorText } from '../api/errors';
 import type { Download, Snapshot } from '../api/types';
 import { AddDownloadsModal } from '../components/AddDownloadsModal';
 import { ConfirmDialog, type Confirmation } from '../components/ConfirmDialog';
@@ -17,6 +18,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
   const toast = useToast();
   const t = useTranslations('Dashboard');
   const tt = useTranslations('Toasts');
+  const te = useTranslations('Errors');
   const ta = useTranslations('Actions');
   const ts = useTranslations('ShutdownBanner');
   const tc = useTranslations('Add');
@@ -32,7 +34,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
       await action();
       if (success) toast({ tone: 'info', message: success });
     } catch (e) {
-      toast({ tone: 'error', message: (e as Error).message || tt('requestFailed') });
+      toast({ tone: 'error', message: errorText(e, te, tt('requestFailed')) });
     }
   };
   const copyPath = (d: Download) => run(() => navigator.clipboard.writeText(d.path), tt('pathCopied'));

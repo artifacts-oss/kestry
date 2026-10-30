@@ -63,15 +63,24 @@ describe('useSettings', () => {
   });
 
   it('save returns field errors from a 400 and keeps the previous settings', async () => {
-    vi.mocked(api.saveSettings).mockRejectedValue(new ApiError('Invalid settings', 400, { downloadDir: 'bad' }));
+    vi.mocked(api.saveSettings).mockRejectedValue(new ApiError('Invalid settings', 400, 'settings.invalid', undefined, { downloadDir: { code: 'settings.downloadDir.outsideRoots', error: 'bad' } }));
     const { result } = renderHook(() => useSettings(0));
     await waitFor(() => expect(result.current.settings).not.toBeNull());
 
     let errors = {};
     await act(async () => { errors = await result.current.save({ ...s, downloadDir: 'x' }); });
 
-    expect(errors).toEqual({ downloadDir: 'bad' });
+    expect(errors).toEqual({ downloadDir: { code: 'settings.downloadDir.outsideRoots', error: 'bad' } });
     expect(result.current.settings).toEqual(s);
+  });
+
+  it('save rethrows API errors that carry no field errors (e.g. a 403) instead of swallowing them', async () => {
+    const forbidden = new ApiError('Origin not allowed', 403, 'request.originNotAllowed');
+    vi.mocked(api.saveSettings).mockRejectedValue(forbidden);
+    const { result } = renderHook(() => useSettings(0));
+    await waitFor(() => expect(result.current.settings).not.toBeNull());
+
+    await expect(result.current.save(s)).rejects.toBe(forbidden);
   });
 
   it('save rethrows unexpected failures', async () => {

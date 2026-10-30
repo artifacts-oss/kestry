@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { AppSettings, SystemInfo } from '../api/types';
+import type { AppSettings, ErrorBody, SystemInfo } from '../api/types';
 import { useTranslations } from '../i18n';
+import { errorText } from '../api/errors';
 import { splitLimit, toKBps, type LimitUnit } from '../settings';
 import { applyTheme, getThemePreference, type ThemePreference } from '../theme';
 import { Select, TextField } from './ui/fields';
@@ -46,11 +47,12 @@ export function SettingsDrawer({ open, onClose, settings, system, onSave }: {
   onClose: () => void;
   settings: AppSettings | null;
   system: SystemInfo | null;
-  onSave: (next: AppSettings) => Promise<Record<string, string>>;
+  onSave: (next: AppSettings) => Promise<Record<string, ErrorBody>>;
 }) {
   const t = useTranslations('Settings');
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const te = useTranslations('Errors');
+  const [errors, setErrors] = useState<Record<string, ErrorBody>>({});
   const [theme, setTheme] = useState<ThemePreference>(getThemePreference);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export function SettingsDrawer({ open, onClose, settings, system, onSave }: {
     setDraft(next);
     if (save) void commitDraft(next);
   };
-  const err = (field: string) => (errors[field] ? (t.has(`errors.${field}`) ? t(`errors.${field}`) : errors[field]) : undefined);
+  const err = (field: string) => (errors[field] ? errorText(errors[field], te, errors[field].error) : undefined);
   const shutdownReason = system && !system.shutdownAvailable ? t(`shutdownUnavailable.${system.shutdownUnavailableReason ?? 'unsupported'}`) : undefined;
 
   return (

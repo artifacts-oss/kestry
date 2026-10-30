@@ -130,20 +130,91 @@
     "seedRatio": "Share-Ratio",
     "theme": "Design",
     "themes": { "light": "Hell", "dark": "Dunkel", "system": "System" },
-    "saveFailed": "Die Einstellungen konnten nicht gespeichert werden",
-    "errors": {
-      "maxConcurrentDownloads": "Muss zwischen 1 und 20 liegen",
-      "downloadLimitKBps": "Muss mindestens 1 KB/s betragen",
-      "uploadLimitKBps": "Muss mindestens 1 KB/s betragen",
-      "seedRatio": "Muss zwischen 0,1 und 100 liegen",
-      "downloadDir": "Muss ein absoluter Pfad in den erlaubten Ordnern und beschreibbar sein",
-      "shutdownWhenDone": "Herunterfahren ist auf diesem Server nicht verfügbar"
-    }
+    "saveFailed": "Die Einstellungen konnten nicht gespeichert werden"
   },
   "ShutdownBanner": {
     "message": "Der Rechner wird in {seconds} s heruntergefahren",
     "cancel": "Herunterfahren abbrechen",
     "cancelled": "Herunterfahren abgebrochen"
+  },
+  "Errors": {
+    "request": {
+      "hostNotAllowed": "Diese Adresse ist nicht erlaubt. Füge ihren Ursprung zu Kestry:AllowedOrigins hinzu.",
+      "originNotAllowed": "Dieser Ursprung ist nicht erlaubt. Füge ihn zu Kestry:AllowedOrigins hinzu.",
+      "tooLarge": "Die Anfrage ist zu groß."
+    },
+    "links": {
+      "empty": "Füge mindestens einen Link ein.",
+      "tooLarge": "Der eingefügte Text ist zu groß.",
+      "tooMany": "Höchstens {max} Links pro Anfrage."
+    },
+    "torrents": {
+      "count": "Sende zwischen 1 und {max} .torrent-Dateien.",
+      "tooLarge": "Es werden nur .torrent-Dateien bis {maxMb} MB akzeptiert.",
+      "invalid": "Das ist keine gültige .torrent-Datei."
+    },
+    "downloads": {
+      "invalidSubfolder": "Der Unterordner muss relativ sein und im Download-Ordner liegen.",
+      "noSource": "Dieser Download hat keine Quelle für einen neuen Versuch.",
+      "notFound": "Der Download existiert nicht mehr."
+    },
+    "aria2": {
+      "error": "aria2 hat einen Fehler gemeldet: {message}",
+      "unavailable": "aria2 ist gerade nicht verfügbar."
+    },
+    "settings": {
+      "invalid": "Die Einstellungen sind ungültig.",
+      "maxConcurrentDownloads": {
+        "range": "Muss zwischen 1 und 20 liegen"
+      },
+      "limit": {
+        "min": "Muss mindestens 1 KB/s betragen"
+      },
+      "seedRatio": {
+        "range": "Muss zwischen 0,1 und 100 liegen"
+      },
+      "downloadDir": {
+        "notAbsolute": "Muss ein absoluter Pfad sein",
+        "outsideRoots": "Muss in einem der erlaubten Ordner liegen",
+        "notWritable": "Der Ordner kann nicht erstellt werden oder ist nicht beschreibbar"
+      },
+      "shutdownWhenDone": {
+        "unavailable": "Herunterfahren ist auf diesem Server nicht verfügbar"
+      }
+    }
+  },
+  "Aria2Errors": {
+    "1": "Unbekannter Fehler",
+    "2": "Zeitüberschreitung der Verbindung",
+    "3": "Die Ressource wurde nicht gefunden",
+    "4": "Zu viele „nicht gefunden“-Antworten; aria2 hat aufgegeben",
+    "5": "Die Download-Geschwindigkeit war zu niedrig",
+    "6": "Es ist ein Netzwerkproblem aufgetreten",
+    "7": "Beim Beenden von aria2 waren Downloads unvollständig",
+    "8": "Der Server unterstützt kein Fortsetzen",
+    "9": "Nicht genug Speicherplatz",
+    "10": "Die Stücklänge weicht von der vorhandenen Steuerdatei ab",
+    "11": "Dieselbe Datei wird bereits heruntergeladen",
+    "12": "Derselbe Torrent wird bereits heruntergeladen",
+    "13": "Die Datei existiert bereits",
+    "14": "Das Umbenennen der Datei ist fehlgeschlagen",
+    "15": "Die vorhandene Datei konnte nicht geöffnet werden",
+    "16": "Die Datei konnte nicht erstellt oder gekürzt werden",
+    "17": "Fehler beim Lesen oder Schreiben der Datei",
+    "18": "Der Ordner konnte nicht erstellt werden",
+    "19": "Namensauflösung fehlgeschlagen",
+    "20": "Das Metalink-Dokument konnte nicht gelesen werden",
+    "21": "Der FTP-Befehl ist fehlgeschlagen",
+    "22": "Unerwartete HTTP-Antwort",
+    "23": "Zu viele Weiterleitungen",
+    "24": "HTTP-Autorisierung fehlgeschlagen",
+    "25": "Die Bencode-Daten konnten nicht gelesen werden",
+    "26": "Die .torrent-Datei ist beschädigt oder unvollständig",
+    "27": "Der Magnet-Link ist ungültig",
+    "28": "Ungültige Option",
+    "29": "Der Remote-Server ist überlastet",
+    "30": "Die JSON-RPC-Anfrage konnte nicht gelesen werden",
+    "32": "Prüfsummenprüfung fehlgeschlagen"
   },
   "LocaleSwitcher": {
     "title": "Sprache wählen",

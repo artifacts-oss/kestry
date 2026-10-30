@@ -1,11 +1,14 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { api } from '../api/client';
+import { api, ApiError } from '../api/client';
 import type { LinksResponse } from '../api/types';
 import { AddDownloadsModal, PREVIEW_DELAY_MS } from './AddDownloadsModal';
 import { ToastProvider } from './ui/Toaster';
 
-vi.mock('../api/client', () => ({ api: { previewLinks: vi.fn(), addLinks: vi.fn(), addTorrents: vi.fn() } }));
+vi.mock('../api/client', async (orig) => ({
+  ...(await orig<typeof import('../api/client')>()),
+  api: { previewLinks: vi.fn(), addLinks: vi.fn(), addTorrents: vi.fn() },
+}));
 
 const response = (valid: number, duplicates = 0, invalid: string[] = []): LinksResponse => ({
   links: invalid.map((text) => ({ text, kind: 'invalid', state: 'invalid' })),
@@ -83,16 +86,30 @@ describe('AddDownloadsModal', () => {
   });
 
   it('shows the server error and stays open when adding fails', async () => {
-    vi.mocked(api.addLinks).mockRejectedValue(new Error('La subcarpeta no es válida'));
+    vi.mocked(api.addLinks).mockRejectedValue(new ApiError('bad', 400, 'downloads.invalidSubfolder'));
     const { links, onClose } = setup();
     await userEvent.type(links, 'x');
     await screen.findByText('2 válidos');
 
     await userEvent.click(screen.getByRole('button', { name: 'Añadir' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('La subcarpeta no es válida');
+    expect(await screen.findByRole('alert')).toHaveTextContent('La subcarpeta debe ser relativa y quedar dentro de la carpeta de descargas.');
     expect(onClose).not.toHaveBeenCalled();
     expect(screen.getByLabelText('Enlaces')).toHaveValue('x');
+  });
+
+  it('explains why a .torrent was rejected, translated, and still closes', async () => {
+    vi.mocked(api.addTorrents).mockResolvedValue([
+      { name: 'a.torrent', status: 'invalid', error: { code: 'torrents.tooLarge', error: 'x', params: { maxMb: 2 } } },
+    ]);
+    const { onClose } = setup();
+    await userEvent.upload(screen.getByLabelText(/Suelta archivos/, { selector: 'input' }), new File(['d'], 'a.torrent'), { applyAccept: false });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Añadir' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Solo se aceptan archivos .torrent de hasta 2 MB.');
+    expect(screen.queryByText('0 descargas añadidas')).toBeNull();
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('ignores a stale preview that arrives after the text changed', async () => {

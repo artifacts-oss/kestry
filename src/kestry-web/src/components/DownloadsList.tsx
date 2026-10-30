@@ -1,4 +1,5 @@
 import type { Download } from '../api/types';
+import { useTranslations } from '../i18n';
 import { DownloadItem } from './ui/DownloadItem';
 
 export interface DownloadActions {
@@ -11,6 +12,7 @@ export interface DownloadActions {
 }
 
 export function DownloadsList({ downloads, actions }: { downloads: Download[]; actions: DownloadActions }) {
+  const te = useTranslations('Aria2Errors');
   return (
     <ul className="flex flex-col gap-2 m-0 p-0 list-none">
       {downloads.map((d) => (
@@ -29,7 +31,7 @@ export function DownloadsList({ downloads, actions }: { downloads: Download[]; a
             connections={d.connections}
             seeders={d.seeders}
             fetchingMetadata={d.fetchingMetadata}
-            error={d.error ?? undefined}
+            error={(te.has(String(d.errorCode)) ? te(String(d.errorCode)) : d.error) ?? undefined}
             onPause={() => actions.onPause(d)}
             onResume={() => actions.onResume(d)}
             onCancel={() => actions.onCancel(d)}

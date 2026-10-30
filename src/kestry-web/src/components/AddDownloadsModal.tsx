@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
-import type { LinksResponse } from '../api/types';
+import { errorText } from '../api/errors';
+import type { ErrorBody, LinksResponse } from '../api/types';
 import { Button } from './ui/Button';
 import { Checkbox, TextArea, TextField } from './ui/fields';
 import { FileDrop } from './ui/FileDrop';
@@ -15,6 +16,7 @@ export function AddDownloadsModal({ open, initialText, onClose }: { open: boolea
   const toast = useToast();
   const a = useTranslations('Add');
   const tt = useTranslations('Toasts');
+  const te = useTranslations('Errors');
   const [text, setText] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [subfolder, setSubfolder] = useState('');
@@ -58,13 +60,19 @@ export function AddDownloadsModal({ open, initialText, onClose }: { open: boolea
     setBusy(true);
     try {
       let added = 0;
+      let rejected: ErrorBody | undefined;
       const options = { subfolder: subfolder.trim() || undefined, paused: paused || undefined };
       if ((preview?.valid ?? 0) > 0) added += (await api.addLinks({ text, ...options })).valid;
-      if (files.length > 0) added += (await api.addTorrents(files, options.subfolder, options.paused)).filter((r) => r.status === 'added').length;
-      toast({ tone: 'info', message: tt('added', { count: added }) });
+      if (files.length > 0) {
+        const results = await api.addTorrents(files, options.subfolder, options.paused);
+        added += results.filter((r) => r.status === 'added').length;
+        rejected = results.find((r) => r.error)?.error;
+      }
+      if (added > 0 || !rejected) toast({ tone: 'info', message: tt('added', { count: added }) });
+      if (rejected) toast({ tone: 'error', message: errorText(rejected, te, tt('requestFailed')) });
       close();
     } catch (e) {
-      toast({ tone: 'error', message: (e as Error).message || tt('requestFailed') });
+      toast({ tone: 'error', message: errorText(e, te, tt('requestFailed')) });
     } finally {
       setBusy(false);
     }

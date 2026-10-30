@@ -19,7 +19,16 @@ export interface Download {
   seeders: number;
   fetchingMetadata: boolean;
   seeding: boolean;
+  /** aria2 exit code (1–32) when failed, else 0; translated in Aria2Errors. */
+  errorCode: number;
   error: string | null;
+}
+
+/** What the API returns for every failure; `code` is translated in the Errors namespace. */
+export interface ErrorBody {
+  code: string;
+  error: string;
+  params?: Record<string, string | number>;
 }
 
 export type Aria2State = 'installing' | 'running' | 'restarting' | 'down';
@@ -57,7 +66,7 @@ export interface LinkResult {
   kind: 'http' | 'ftp' | 'magnet' | 'torrenturl' | 'invalid';
   state: LinkState;
   gid?: string;
-  error?: string;
+  error?: ErrorBody;
 }
 
 /** `valid` counts links that can be added (preview) or were added (add). */
@@ -72,5 +81,5 @@ export interface TorrentResult {
   name: string;
   status: 'added' | 'invalid';
   gid?: string;
-  error?: string;
+  error?: ErrorBody;
 }

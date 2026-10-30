@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from './api/client';
+import { errorText } from './api/errors';
 import type { SystemInfo } from './api/types';
 import { useSnapshot } from './api/useSnapshot';
 import { Header } from './components/Header';
@@ -13,6 +14,7 @@ import { applyTheme, getThemePreference } from './theme';
 function Shell() {
   const toast = useToast();
   const t = useTranslations('Settings');
+  const te = useTranslations('Errors');
   const { snapshot, connected } = useSnapshot();
   const { settings, save } = useSettings(snapshot?.settingsVersion);
   const [system, setSystem] = useState<SystemInfo | null>(null);
@@ -28,8 +30,8 @@ function Shell() {
   const saveSafely = async (next: Parameters<typeof save>[0]) => {
     try {
       return await save(next);
-    } catch {
-      toast({ tone: 'error', message: t('saveFailed') });
+    } catch (e) {
+      toast({ tone: 'error', message: errorText(e, te, t('saveFailed')) });
       return {};
     }
   };

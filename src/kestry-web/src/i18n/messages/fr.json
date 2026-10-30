@@ -130,20 +130,91 @@
     "seedRatio": "Ratio de partage",
     "theme": "Thème",
     "themes": { "light": "Clair", "dark": "Sombre", "system": "Système" },
-    "saveFailed": "Les réglages n'ont pas pu être enregistrés",
-    "errors": {
-      "maxConcurrentDownloads": "Doit être compris entre 1 et 20",
-      "downloadLimitKBps": "Doit être d'au moins 1 KB/s",
-      "uploadLimitKBps": "Doit être d'au moins 1 KB/s",
-      "seedRatio": "Doit être compris entre 0,1 et 100",
-      "downloadDir": "Doit être un chemin absolu dans les dossiers autorisés, avec droit d'écriture",
-      "shutdownWhenDone": "L'extinction n'est pas disponible sur ce serveur"
-    }
+    "saveFailed": "Les réglages n'ont pas pu être enregistrés"
   },
   "ShutdownBanner": {
     "message": "La machine s'éteindra dans {seconds} s",
     "cancel": "Annuler l'extinction",
     "cancelled": "Extinction annulée"
+  },
+  "Errors": {
+    "request": {
+      "hostNotAllowed": "Cette adresse n'est pas autorisée. Ajoutez son origine à Kestry:AllowedOrigins.",
+      "originNotAllowed": "Cette origine n'est pas autorisée. Ajoutez-la à Kestry:AllowedOrigins.",
+      "tooLarge": "La requête est trop volumineuse."
+    },
+    "links": {
+      "empty": "Collez au moins un lien.",
+      "tooLarge": "Le texte collé est trop volumineux.",
+      "tooMany": "Au plus {max} liens par requête."
+    },
+    "torrents": {
+      "count": "Envoyez entre 1 et {max} fichiers .torrent.",
+      "tooLarge": "Seuls les fichiers .torrent jusqu'à {maxMb} Mo sont acceptés.",
+      "invalid": "Ce n'est pas un fichier .torrent valide."
+    },
+    "downloads": {
+      "invalidSubfolder": "Le sous-dossier doit être relatif et rester dans le dossier de téléchargements.",
+      "noSource": "Ce téléchargement n'a pas de source pour réessayer.",
+      "notFound": "Le téléchargement n'existe plus."
+    },
+    "aria2": {
+      "error": "aria2 a signalé une erreur : {message}",
+      "unavailable": "aria2 n'est pas disponible pour le moment."
+    },
+    "settings": {
+      "invalid": "Les réglages ne sont pas valides.",
+      "maxConcurrentDownloads": {
+        "range": "Doit être compris entre 1 et 20"
+      },
+      "limit": {
+        "min": "Doit être d'au moins 1 KB/s"
+      },
+      "seedRatio": {
+        "range": "Doit être compris entre 0,1 et 100"
+      },
+      "downloadDir": {
+        "notAbsolute": "Doit être un chemin absolu",
+        "outsideRoots": "Doit se trouver dans l'un des dossiers autorisés",
+        "notWritable": "Le dossier ne peut pas être créé ou n'est pas accessible en écriture"
+      },
+      "shutdownWhenDone": {
+        "unavailable": "L'extinction n'est pas disponible sur ce serveur"
+      }
+    }
+  },
+  "Aria2Errors": {
+    "1": "Erreur inconnue",
+    "2": "Délai de connexion dépassé",
+    "3": "Ressource introuvable",
+    "4": "Trop de réponses « introuvable » ; aria2 a abandonné",
+    "5": "La vitesse de téléchargement était trop faible",
+    "6": "Un problème réseau est survenu",
+    "7": "Des téléchargements étaient inachevés à la fermeture d'aria2",
+    "8": "Le serveur ne permet pas la reprise",
+    "9": "Espace disque insuffisant",
+    "10": "La taille des pièces diffère du fichier de contrôle existant",
+    "11": "Le même fichier est déjà en cours de téléchargement",
+    "12": "Le même torrent est déjà en cours de téléchargement",
+    "13": "Le fichier existe déjà",
+    "14": "Le renommage du fichier a échoué",
+    "15": "Le fichier existant n'a pas pu être ouvert",
+    "16": "Le fichier n'a pas pu être créé ou tronqué",
+    "17": "Erreur de lecture ou d'écriture du fichier",
+    "18": "Le dossier n'a pas pu être créé",
+    "19": "Échec de la résolution de noms",
+    "20": "Le document Metalink n'a pas pu être analysé",
+    "21": "La commande FTP a échoué",
+    "22": "Réponse HTTP inattendue",
+    "23": "Trop de redirections",
+    "24": "Échec de l'autorisation HTTP",
+    "25": "Les données bencode n'ont pas pu être analysées",
+    "26": "Le fichier .torrent est corrompu ou incomplet",
+    "27": "Le lien magnet n'est pas valide",
+    "28": "Option non valide",
+    "29": "Le serveur distant est surchargé",
+    "30": "La requête JSON-RPC n'a pas pu être analysée",
+    "32": "Échec de la vérification du checksum"
   },
   "LocaleSwitcher": {
     "title": "Choisir la langue",

@@ -1,11 +1,12 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Download, Snapshot } from '../api/types';
-import { api } from '../api/client';
+import { api, ApiError } from '../api/client';
 import { ToastProvider } from '../components/ui/Toaster';
 import { DownloadsPage } from './DownloadsPage';
 
-vi.mock('../api/client', () => ({
+vi.mock('../api/client', async (orig) => ({
+  ...(await orig<typeof import('../api/client')>()),
   api: {
     pause: vi.fn().mockResolvedValue(undefined),
     resume: vi.fn().mockResolvedValue(undefined),
@@ -21,7 +22,7 @@ vi.mock('../api/client', () => ({
 
 const d = (gid: string, status: Download['status'], extra: Partial<Download> = {}): Download => ({
   gid, name: `${gid}.bin`, path: `/d/${gid}.bin`, status, source: 'https', fileType: 'file', size: 100, downloaded: 50, speed: 10,
-  uploadSpeed: 0, eta: 5, connections: 0, seeders: 0, fetchingMetadata: false, seeding: false, error: null, ...extra,
+  uploadSpeed: 0, eta: 5, connections: 0, seeders: 0, fetchingMetadata: false, seeding: false, errorCode: 0, error: null, ...extra,
 });
 
 const snap = (downloads: Download[], aria2: Partial<Snapshot['aria2']> = {}): Snapshot => ({
@@ -123,10 +124,10 @@ describe('DownloadsPage', () => {
   });
 
   it('shows an error toast when an action fails', async () => {
-    vi.mocked(api.pause).mockRejectedValueOnce(new Error('GID is not found'));
+    vi.mocked(api.pause).mockRejectedValueOnce(new ApiError('GID is not found', 404, 'downloads.notFound'));
     renderPage(snap(all));
     await userEvent.click(screen.getByRole('button', { name: 'Pausar a.bin' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('GID is not found');
+    expect(await screen.findByRole('alert')).toHaveTextContent('La descarga ya no existe.');
   });
 
   it('announces a download that completes between snapshots', () => {
@@ -143,6 +144,15 @@ const paste = (text: string, target: Element = document.body) => {
   target.dispatchEvent(event);
   return event;
 };
+
+describe('failed downloads', () => {
+  it('translates the aria2 error code and falls back to its message for unknown codes', () => {
+    renderPage(snap([d('a', 'failed', { errorCode: 9, error: 'File allocation failed' }), d('b', 'failed', { errorCode: 99, error: 'Weird one' })]));
+    expect(screen.getByText(/No hay espacio suficiente en disco/)).toBeInTheDocument();
+    expect(screen.queryByText(/File allocation failed/)).toBeNull();
+    expect(screen.getByText(/Weird one/)).toBeInTheDocument();
+  });
+});
 
 describe('adding downloads', () => {
   it('opens the dialog from the toolbar and from the empty state', async () => {

@@ -66,7 +66,7 @@ describe('SettingsDrawer', () => {
   });
 
   it('saves the folder trimmed and shows server errors in Spanish next to the field', async () => {
-    const save = vi.fn().mockResolvedValue({ downloadDir: 'Must be inside one of the allowed folders.' });
+    const save = vi.fn().mockResolvedValue({ downloadDir: { code: 'settings.downloadDir.outsideRoots', error: 'Must be inside one of the allowed folders.' } });
     setup({}, system, save);
     const dir = screen.getByLabelText('Carpeta de descargas');
 
@@ -75,7 +75,7 @@ describe('SettingsDrawer', () => {
     await userEvent.tab();
 
     expect(save).toHaveBeenCalledWith({ ...settings, downloadDir: '/etc' });
-    expect(await screen.findByText(/ruta absoluta dentro de las carpetas permitidas/)).toBeInTheDocument();
+    expect(await screen.findByText('Debe estar dentro de una de las carpetas permitidas')).toBeInTheDocument();
     expect(dir).toHaveAttribute('aria-invalid', 'true');
     expect(dir).toHaveValue('  /etc  '); // the draft is kept as typed so the user can fix it
   });
