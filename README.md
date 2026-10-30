@@ -121,6 +121,12 @@ Errors are JSON `{ "code": "links.tooMany", "error": "English text", "params": {
 
 No users/permissions, torrent search/RSS, streaming, `sftp://` links, queue reordering, bulk selection or per-download detail panel. The ideas for later are listed in `docs/PLAN-en.md` §15.
 
+## Advice
+
+This project is mostly designed and coded by AI agents. The generated code and its behavior are reviewed carefully by a human and by dedicated code-quality agents before they are merged.
+
+AI-generated pull requests are welcome, provided the human who created them has reviewed the code and verified its behavior **before** opening the PR. Unreviewed AI output will not be merged.
+
 ## License
 
 [MIT](LICENSE).
