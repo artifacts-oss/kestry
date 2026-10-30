@@ -14,7 +14,7 @@ export function NavItem({ label, icon, count, active, className, ...rest }: Butt
       {...rest}
       aria-current={active ? 'page' : undefined}
       className={cx(
-        'group flex items-center gap-3 w-full h-10 px-3 border-0 rounded-md bg-transparent text-left text-body-sm font-semibold cursor-pointer',
+        'group flex items-center gap-3 h-10 px-3 border-0 rounded-md bg-transparent text-left text-body-sm font-semibold cursor-pointer',
         'text-ink-muted hover:bg-surface-200 hover:text-ink aria-[current=page]:bg-slate-100 aria-[current=page]:text-ink',
         className,
       )}

@@ -20,7 +20,7 @@ export const strings = {
     minutes: (n: number) => `quedan ${n} min`,
     hoursMinutes: (h: number, m: number) => `quedan ${h} h ${m} min`,
   },
-  peers: (connections: number, seeders: number) => `${connections} conexiones · ${seeders} seeds`,
+  peers: (connections: number, seeders: number) => `${connections} ${connections === 1 ? 'conexión' : 'conexiones'} · ${seeders} ${seeders === 1 ? 'seed' : 'seeds'}`,
   actions: {
     pause: 'Pausar',
     resume: 'Reanudar',

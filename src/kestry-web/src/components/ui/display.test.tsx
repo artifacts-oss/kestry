@@ -147,3 +147,10 @@ describe('FileDrop', () => {
     expect(screen.getByText('1 archivo seleccionado')).toBeInTheDocument();
   });
 });
+
+describe('peers wording', () => {
+  it('uses the singular for one connection and one seed', () => {
+    render(<DownloadItem name="t" status="downloading" source="torrent" connections={1} seeders={1} />);
+    expect(screen.getByText(/1 conexión · 1 seed$/)).toBeInTheDocument();
+  });
+});
