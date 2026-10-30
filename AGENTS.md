@@ -5,7 +5,7 @@ Guidance for AI coding agents (and humans) working on Kestry: a web download man
 ## Ground rules
 
 - **Language**: code, comments, docs, commit messages and CLI/README text are in **English**. The *UI* is translated (en, es, de, fr; modelled on artifacts-oss/daylog's next-intl setup). Every visible string lives in `src/kestry-web/src/i18n/messages/<locale>.json`; never hard-code UI text in components. Adding or changing a string means updating **all four files** (a test enforces identical keys and placeholders).
-- **Do not edit `Kestry/`.** It is the original plan (`PLAN.md`) and the exported Kestrel design system, kept as read-only reference. The project lives at the repo root. `design/kestrel/` is a copy of the export used by tests.
+- **Do not edit `docs/`.** It is the original plan (`PLAN-es.md`, English translation `PLAN-en.md`) and the exported Kestrel design system, kept as read-only reference. The project lives at the repo root. `design/kestrel/` is a copy of the export used by tests.
 - Every feature ships with tests. Stage commits separately (one logical change each) and keep the maintainer as author; never add AI co-author trailers.
 - Smallest change that fully solves the task; no speculative options or abstractions.
 
