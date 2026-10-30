@@ -123,4 +123,4 @@ No users/permissions, torrent search/RSS, streaming, `sftp://` links, queue reor
 
 ## License
 
-No license has been chosen yet.
+[MIT](LICENSE).
