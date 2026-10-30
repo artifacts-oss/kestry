@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { cx } from './cx';
 import { Icon, type IconName } from './Icon';
 import { IconButton } from './Button';
-import { strings } from '../../strings';
+import { useTranslations } from '../../i18n';
 
 export type ToastTone = 'info' | 'success' | 'error';
 
@@ -30,6 +30,7 @@ export function Toast({ tone = 'info', children, actionLabel, onAction, onClose 
   onAction?: () => void;
   onClose?: () => void;
 }) {
+  const t = useTranslations('Actions');
   return (
     <div
       role={tone === 'error' ? 'alert' : 'status'}
@@ -42,7 +43,7 @@ export function Toast({ tone = 'info', children, actionLabel, onAction, onClose 
           {actionLabel}
         </button>
       )}
-      {onClose && <IconButton icon="x" label={strings.actions.dismiss} size="sm" onClick={onClose} />}
+      {onClose && <IconButton icon="x" label={t('dismiss')} size="sm" onClick={onClose} />}
     </div>
   );
 }

@@ -5,14 +5,17 @@ import { ActionMenu, type MenuAction } from './ActionMenu';
 import { ProgressBar, StatusBadge, type DownloadStatus } from './status';
 import { formatBytes, formatEta, formatSpeed } from './format';
 import { useNarrow } from './useNarrow';
-import { strings } from '../../strings';
+import { useTranslations, type Translator } from '../../i18n';
+
+// Protocol names are not translated.
+const sourceLabels = { http: 'HTTP', https: 'HTTPS', ftp: 'FTP', torrent: 'Torrent', magnet: 'Magnet' };
 
 export interface DownloadItemProps {
   name: string;
   path?: string;
   status: DownloadStatus;
   fileType?: Extract<IconName, 'file' | 'video' | 'archive' | 'music' | 'image'>;
-  source?: keyof typeof strings.sources;
+  source?: keyof typeof sourceLabels;
   size?: number;
   downloaded?: number;
   speed?: number;
@@ -31,40 +34,42 @@ export interface DownloadItemProps {
   className?: string;
 }
 
-function metaLine(p: DownloadItemProps): string {
+function metaLine(p: DownloadItemProps, t: Translator, eta: Translator): string {
   const { status } = p;
-  if (status === 'failed') return p.error || strings.downloadFailed;
-  if (p.fetchingMetadata) return strings.fetchingMetadata;
+  if (status === 'failed') return p.error || t('failed');
+  if (p.fetchingMetadata) return t('fetchingMetadata');
   if (status === 'completed') return formatBytes(p.size);
-  if (status === 'queued') return `${strings.waiting} · ${formatBytes(p.size)}`;
-  const parts = [`${formatBytes(p.downloaded ?? 0)} ${strings.of} ${formatBytes(p.size)}`];
+  if (status === 'queued') return `${t('waiting')} · ${formatBytes(p.size)}`;
+  const parts = [t('sizeOf', { done: formatBytes(p.downloaded ?? 0), total: formatBytes(p.size) })];
   if (status === 'downloading') {
     if (p.speed) {
       const up = p.source === 'torrent' || p.source === 'magnet' ? ` ↑ ${formatSpeed(p.uploadSpeed ?? 0)}` : '';
       parts.push(`↓ ${formatSpeed(p.speed)}${up}`);
     }
-    const eta = formatEta(p.eta);
-    if (eta) parts.push(eta);
+    const left = formatEta(p.eta, eta);
+    if (left) parts.push(left);
   }
   return parts.join(' · ');
 }
 
 export function DownloadItem(p: DownloadItemProps) {
+  const t = useTranslations('Download');
+  const eta = useTranslations('Eta');
+  const a = useTranslations('Actions');
   const narrow = useNarrow();
   const { status } = p;
   const pct = p.size ? ((p.downloaded ?? 0) / p.size) * 100 : undefined;
   const isTorrent = p.source === 'torrent' || p.source === 'magnet';
 
-  const a = strings.actions;
   const actions: MenuAction[] = [];
-  if (status === 'downloading') actions.push({ icon: 'pause', label: a.pause, onSelect: p.onPause });
-  if (status === 'paused') actions.push({ icon: 'play', label: a.resume, onSelect: p.onResume });
-  if (status === 'failed') actions.push({ icon: 'retry', label: a.retry, onSelect: p.onRetry });
-  if (status === 'completed') actions.push({ icon: 'folder', label: a.copyPath, onSelect: p.onCopyPath });
-  if (status === 'completed' || status === 'failed') actions.push({ icon: 'trash', label: a.remove, onSelect: p.onRemove });
-  else actions.push({ icon: 'x', label: a.cancel, onSelect: p.onCancel });
+  if (status === 'downloading') actions.push({ icon: 'pause', label: a('pause'), onSelect: p.onPause });
+  if (status === 'paused') actions.push({ icon: 'play', label: a('resume'), onSelect: p.onResume });
+  if (status === 'failed') actions.push({ icon: 'retry', label: a('retry'), onSelect: p.onRetry });
+  if (status === 'completed') actions.push({ icon: 'folder', label: a('copyPath'), onSelect: p.onCopyPath });
+  if (status === 'completed' || status === 'failed') actions.push({ icon: 'trash', label: a('remove'), onSelect: p.onRemove });
+  else actions.push({ icon: 'x', label: a('cancel'), onSelect: p.onCancel });
 
-  const detail = [p.source && strings.sources[p.source], metaLine(p), isTorrent && status === 'downloading' && p.connections != null && strings.peers(p.connections, p.seeders ?? 0)]
+  const detail = [p.source && sourceLabels[p.source], metaLine(p, t, eta), isTorrent && status === 'downloading' && p.connections != null && t('peers', { connections: p.connections, seeders: p.seeders ?? 0 })]
     .filter(Boolean)
     .join(' · ');
 
@@ -87,7 +92,7 @@ export function DownloadItem(p: DownloadItemProps) {
           <ProgressBar
             status={status}
             value={p.fetchingMetadata ? undefined : status === 'failed' ? (pct ?? 0) : pct}
-            label={strings.progressLabel(p.name)}
+            label={t('progress', { name: p.name })}
           />
         )}
         <span className={cx('text-label font-normal tracking-normal tabular-nums', status === 'failed' ? 'text-danger' : 'text-ink-muted')}>

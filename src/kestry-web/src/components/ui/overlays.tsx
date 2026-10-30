@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Dialog as RadixDialog } from 'radix-ui';
 import { cx } from './cx';
 import { IconButton } from './Button';
-import { strings } from '../../strings';
+import { useTranslations } from '../../i18n';
 
 interface OverlayProps {
   open: boolean;
@@ -13,6 +13,7 @@ interface OverlayProps {
 }
 
 function Sheet({ open, title, onClose, footer, children, panel }: OverlayProps & { panel: string }) {
+  const t = useTranslations('Actions');
   return (
     <RadixDialog.Root open={open} onOpenChange={(o) => !o && onClose()}>
       <RadixDialog.Portal>
@@ -24,7 +25,7 @@ function Sheet({ open, title, onClose, footer, children, panel }: OverlayProps &
           <div className="flex items-center justify-between px-6 py-4 border-b border-line">
             <RadixDialog.Title className="m-0 text-heading-2 text-ink">{title}</RadixDialog.Title>
             <RadixDialog.Close asChild>
-              <IconButton icon="x" label={strings.actions.close} />
+              <IconButton icon="x" label={t('close')} />
             </RadixDialog.Close>
           </div>
           <div className="flex flex-col flex-1 gap-4 p-6 overflow-y-auto">{children}</div>

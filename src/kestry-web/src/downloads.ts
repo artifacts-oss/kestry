@@ -1,5 +1,4 @@
 import type { Download } from './api/types';
-import { strings } from './strings';
 
 export type Filter = 'all' | 'downloading' | 'queued' | 'completed' | 'failed';
 export const FILTERS: Filter[] = ['all', 'downloading', 'queued', 'completed', 'failed'];
@@ -18,7 +17,7 @@ export function filterDownloads(list: Download[], filter: Filter, query: string)
 
 export interface ToastSpec {
   tone: 'success' | 'error';
-  message: string;
+  name: string;
   gid: string;
   action: 'copyPath' | 'retry';
 }
@@ -31,8 +30,8 @@ export function diffSnapshots(prev: Download[] | null, next: Download[]): ToastS
   for (const d of next) {
     const was = before.get(d.gid);
     if (!was || was === d.status) continue;
-    if (d.status === 'completed') out.push({ tone: 'success', message: strings.toasts.completed(d.name), gid: d.gid, action: 'copyPath' });
-    if (d.status === 'failed') out.push({ tone: 'error', message: strings.toasts.failed(d.name), gid: d.gid, action: 'retry' });
+    if (d.status === 'completed') out.push({ tone: 'success', name: d.name, gid: d.gid, action: 'copyPath' });
+    if (d.status === 'failed') out.push({ tone: 'error', name: d.name, gid: d.gid, action: 'retry' });
   }
   return out;
 }

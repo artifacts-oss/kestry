@@ -2,9 +2,9 @@ import { render } from '@testing-library/react';
 import { Icon, iconNames } from './Icon';
 
 describe('Icon', () => {
-  it('ports the 23 Kestrel icons plus upload and magnet', () => {
-    expect(iconNames).toHaveLength(25);
-    expect(iconNames).toEqual(expect.arrayContaining(['upload', 'magnet', 'gauge', 'chevronDown']));
+  it('ports the 23 Kestrel icons plus upload, magnet and globe', () => {
+    expect(iconNames).toHaveLength(26);
+    expect(iconNames).toEqual(expect.arrayContaining(['upload', 'magnet', 'globe', 'gauge', 'chevronDown']));
   });
 
   it('is decorative without a label', () => {

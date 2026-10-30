@@ -8,7 +8,7 @@ A self-hosted download manager for torrents, magnet links and direct links (HTTP
 - Speed limits, concurrency, download folder, seeding and "shut down when finished".
 - One process, one port. No database. No login: protect it with a tunnel or VPN (see [Remote access](#remote-access-and-security)).
 
-> The interface is in Spanish (all text lives in `src/kestry-web/src/strings.ts`, ready to be translated).
+- Available in English, Spanish, German and French. The language follows your browser and can be changed from the globe icon in the header (remembered in the browser).
 
 ## Install
 

@@ -1,9 +1,10 @@
 import { useId, useState } from 'react';
 import { cx } from './cx';
 import { Icon } from './Icon';
-import { strings } from '../../strings';
+import { useTranslations } from '../../i18n';
 
 export function FileDrop({ accept, onFiles }: { accept: string; onFiles: (files: File[]) => void }) {
+  const t = useTranslations('FileDrop');
   const id = useId();
   const [over, setOver] = useState(false);
   const [count, setCount] = useState(0);
@@ -26,7 +27,7 @@ export function FileDrop({ accept, onFiles }: { accept: string; onFiles: (files:
       )}
     >
       <Icon name="upload" size={24} />
-      <span>{count ? strings.fileDrop.selected(count) : strings.fileDrop.prompt}</span>
+      <span>{count ? t('selected', { count }) : t('prompt')}</span>
       <input id={id} type="file" multiple accept={accept} className="sr-only" onChange={(e) => take(e.target.files)} />
     </label>
   );

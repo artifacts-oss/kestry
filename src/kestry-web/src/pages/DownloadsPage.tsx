@@ -11,10 +11,15 @@ import { TextField } from '../components/ui/fields';
 import { EmptyState, Toolbar } from '../components/ui/layout';
 import { useToast } from '../components/ui/Toaster';
 import { countByFilter, diffSnapshots, filterDownloads, summarize, type Filter } from '../downloads';
-import { strings } from '../strings';
+import { useTranslations } from '../i18n';
 
 export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot: Snapshot | null; connected: boolean; aria2Version: string | null }) {
   const toast = useToast();
+  const t = useTranslations('Dashboard');
+  const tt = useTranslations('Toasts');
+  const ta = useTranslations('Actions');
+  const ts = useTranslations('ShutdownBanner');
+  const tc = useTranslations('Add');
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
   const [adding, setAdding] = useState<string | null>(null); // null = closed, otherwise the initial text
@@ -27,21 +32,21 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
       await action();
       if (success) toast({ tone: 'info', message: success });
     } catch (e) {
-      toast({ tone: 'error', message: (e as Error).message || strings.toasts.requestFailed });
+      toast({ tone: 'error', message: (e as Error).message || tt('requestFailed') });
     }
   };
-  const copyPath = (d: Download) => run(() => navigator.clipboard.writeText(d.path), strings.toasts.pathCopied);
-  const retry = (d: Download) => run(() => api.retry(d.gid), strings.toasts.retried);
+  const copyPath = (d: Download) => run(() => navigator.clipboard.writeText(d.path), tt('pathCopied'));
+  const retry = (d: Download) => run(() => api.retry(d.gid), tt('retried'));
 
   useEffect(() => {
     if (!snapshot) return;
-    for (const t of diffSnapshots(previous.current, snapshot.downloads)) {
-      const d = snapshot.downloads.find((x) => x.gid === t.gid)!;
-      const isCopy = t.action === 'copyPath';
+    for (const spec of diffSnapshots(previous.current, snapshot.downloads)) {
+      const d = snapshot.downloads.find((x) => x.gid === spec.gid)!;
+      const isCopy = spec.action === 'copyPath';
       toast({
-        tone: t.tone,
-        message: t.message,
-        actionLabel: isCopy ? strings.actions.copyPath : strings.actions.retry,
+        tone: spec.tone,
+        message: tt(spec.tone === 'success' ? 'completed' : 'failed', { name: spec.name }),
+        actionLabel: isCopy ? ta('copyPath') : ta('retry'),
         onAction: () => (isCopy ? copyPath(d) : retry(d)),
       });
     }
@@ -70,24 +75,24 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
     <div className="flex flex-col flex-1 lg:flex-row">
       <Sidebar filter={filter} onFilter={setFilter} counts={countByFilter(downloads)} snapshot={snapshot} connected={connected} aria2Version={aria2Version} />
       <main className="flex flex-col flex-1 min-w-0 bg-surface-000">
-        <Toolbar label={strings.toolbarLabel} className="flex-wrap">
-          <TextField icon="search" aria-label={strings.search} placeholder={strings.search} value={query} onChange={(e) => setQuery(e.target.value)} className="w-full sm:w-72" />
+        <Toolbar label={t('toolbar')} className="flex-wrap">
+          <TextField icon="search" aria-label={t('search')} placeholder={t('search')} value={query} onChange={(e) => setQuery(e.target.value)} className="w-full sm:w-72" />
           <Toolbar.Spacer />
-          <Button variant="quiet" icon="pause" onClick={() => run(api.pauseAll)}>{strings.pauseAll}</Button>
-          <Button variant="quiet" icon="play" onClick={() => run(api.resumeAll)}>{strings.resumeAll}</Button>
-          <Button variant="primary" icon="plus" onClick={() => setAdding('')}>{strings.add.button}</Button>
+          <Button variant="quiet" icon="pause" onClick={() => run(api.pauseAll)}>{t('pauseAll')}</Button>
+          <Button variant="quiet" icon="play" onClick={() => run(api.resumeAll)}>{t('resumeAll')}</Button>
+          <Button variant="primary" icon="plus" onClick={() => setAdding('')}>{tc('button')}</Button>
         </Toolbar>
         <div className="flex flex-col gap-4 p-4 lg:px-12 lg:py-8">
-          <ShutdownBanner seconds={snapshot?.shutdown ?? null} onCancel={() => run(api.cancelShutdown, strings.shutdownBanner.cancelled)} />
-          {downloads.length > 0 && <p className="m-0 text-body-sm text-ink-muted">{strings.summary(active, queued)}</p>}
+          <ShutdownBanner seconds={snapshot?.shutdown ?? null} onCancel={() => run(api.cancelShutdown, ts('cancelled'))} />
+          {downloads.length > 0 && <p className="m-0 text-body-sm text-ink-muted">{t('summary', { active, queued })}</p>}
           {downloads.length === 0 ? (
             <EmptyState
-              title={strings.empty.title}
-              description={strings.empty.description}
-              action={<Button variant="primary" icon="plus" className="h-12 px-6" onClick={() => setAdding('')}>{strings.add.pasteHere}</Button>}
+              title={t('emptyTitle')}
+              description={t('emptyDescription')}
+              action={<Button variant="primary" icon="plus" className="h-12 px-6" onClick={() => setAdding('')}>{tc('pasteHere')}</Button>}
             />
           ) : visible.length === 0 ? (
-            <p className="m-0 py-8 text-center text-body-sm text-ink-muted">{strings.noResults}</p>
+            <p className="m-0 py-8 text-center text-body-sm text-ink-muted">{t('noResults')}</p>
           ) : (
             <DownloadsList
               downloads={visible}
@@ -109,7 +114,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
         onClose={() => setConfirmation(null)}
         onConfirm={(c, deleteFiles) => {
           setConfirmation(null);
-          run(() => api.remove(c.gid, deleteFiles), c.kind === 'cancel' ? strings.toasts.cancelled : strings.toasts.removed);
+          run(() => api.remove(c.gid, deleteFiles), c.kind === 'cancel' ? tt('cancelled') : tt('removed'));
         }}
       />
     </div>

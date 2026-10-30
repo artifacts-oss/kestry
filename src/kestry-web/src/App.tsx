@@ -7,11 +7,12 @@ import { SettingsDrawer } from './components/SettingsDrawer';
 import { ToastProvider, useToast } from './components/ui/Toaster';
 import { DownloadsPage } from './pages/DownloadsPage';
 import { useSettings } from './settings';
-import { strings } from './strings';
+import { useTranslations } from './i18n';
 import { applyTheme, getThemePreference } from './theme';
 
 function Shell() {
   const toast = useToast();
+  const t = useTranslations('Settings');
   const { snapshot, connected } = useSnapshot();
   const { settings, save } = useSettings(snapshot?.settingsVersion);
   const [system, setSystem] = useState<SystemInfo | null>(null);
@@ -28,7 +29,7 @@ function Shell() {
     try {
       return await save(next);
     } catch {
-      toast({ tone: 'error', message: strings.settings.saveFailed });
+      toast({ tone: 'error', message: t('saveFailed') });
       return {};
     }
   };

@@ -35,12 +35,12 @@ describe('diffSnapshots', () => {
 
   it('toasts when a download completes, with a copy-path action', () => {
     const out = diffSnapshots([d('a', 'downloading')], [d('a', 'completed')]);
-    expect(out).toEqual([{ tone: 'success', message: 'Descarga completada: a.bin', gid: 'a', action: 'copyPath' }]);
+    expect(out).toEqual([{ tone: 'success', name: 'a.bin', gid: 'a', action: 'copyPath' }]);
   });
 
   it('toasts an error with retry when a download fails', () => {
     const out = diffSnapshots([d('a', 'downloading')], [d('a', 'failed')]);
-    expect(out).toEqual([{ tone: 'error', message: 'Ha fallado: a.bin', gid: 'a', action: 'retry' }]);
+    expect(out).toEqual([{ tone: 'error', name: 'a.bin', gid: 'a', action: 'retry' }]);
   });
 
   it('does not repeat for unchanged or already-finished downloads', () => {

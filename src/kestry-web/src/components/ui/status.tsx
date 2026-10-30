@@ -1,5 +1,5 @@
 import { cx } from './cx';
-import { strings } from '../../strings';
+import { useTranslations } from '../../i18n';
 
 export type DownloadStatus = 'downloading' | 'queued' | 'paused' | 'completed' | 'failed';
 
@@ -20,6 +20,7 @@ const fill: Record<DownloadStatus, string> = {
 };
 
 export function StatusBadge({ status, children }: { status: DownloadStatus; children?: React.ReactNode }) {
+  const t = useTranslations('Status');
   return (
     <span
       className={cx(
@@ -28,7 +29,7 @@ export function StatusBadge({ status, children }: { status: DownloadStatus; chil
         badge[status],
       )}
     >
-      {children ?? strings.status[status]}
+      {children ?? t(status)}
     </span>
   );
 }

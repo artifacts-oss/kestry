@@ -1,7 +1,7 @@
 import { DropdownMenu } from 'radix-ui';
 import { Icon, type IconName } from './Icon';
 import { IconButton } from './Button';
-import { strings } from '../../strings';
+import { useTranslations } from '../../i18n';
 
 export interface MenuAction {
   icon: IconName;
@@ -9,11 +9,12 @@ export interface MenuAction {
   onSelect?: () => void;
 }
 
-export function ActionMenu({ actions, label = strings.actions.more }: { actions: MenuAction[]; label?: string }) {
+export function ActionMenu({ actions, label }: { actions: MenuAction[]; label?: string }) {
+  const t = useTranslations('Actions');
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <IconButton icon="sliders" label={label} size="sm" />
+        <IconButton icon="sliders" label={label ?? t('more')} size="sm" />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content

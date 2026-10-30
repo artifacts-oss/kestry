@@ -4,10 +4,12 @@ import { DownloadItem, type DownloadItemProps } from './DownloadItem';
 import { FileDrop } from './FileDrop';
 import { Banner } from './layout';
 import { EmptyState, NavItem, SpeedStat, Toolbar } from './layout';
+import { createTranslator } from '../../i18n';
 import { formatBytes, formatEta } from './format';
 import { ProgressBar, StatusBadge } from './status';
 
 describe('format', () => {
+  const eta = createTranslator('es', 'Eta');
   it('formats bytes', () => {
     expect(formatBytes(0)).toBe('0 B');
     expect(formatBytes(1536)).toBe('1.5 KB');
@@ -19,11 +21,11 @@ describe('format', () => {
     [30, 'quedan 30 s'],
     [90, 'quedan 2 min'],
     [3 * 3600 + 25 * 60, 'quedan 3 h 25 min'],
-  ])('formats ETA %s', (seconds, text) => expect(formatEta(seconds)).toBe(text));
+  ])('formats ETA %s', (seconds, text) => expect(formatEta(seconds, eta)).toBe(text));
 
   it('returns null for unknown ETA', () => {
-    expect(formatEta(undefined)).toBeNull();
-    expect(formatEta(Infinity)).toBeNull();
+    expect(formatEta(undefined, eta)).toBeNull();
+    expect(formatEta(Infinity, eta)).toBeNull();
   });
 });
 

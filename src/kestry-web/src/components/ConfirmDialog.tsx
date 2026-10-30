@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from './ui/Button';
 import { Checkbox } from './ui/fields';
 import { Dialog } from './ui/overlays';
-import { strings } from '../strings';
+import { useTranslations } from '../i18n';
 
 export type Confirmation = { kind: 'cancel' | 'remove'; gid: string; name: string };
 
@@ -13,16 +13,16 @@ export function ConfirmDialog({ confirmation, onConfirm, onClose }: {
   onClose: () => void;
 }) {
   const [deleteFiles, setDeleteFiles] = useState(false);
-  const t = strings.confirm;
+  const t = useTranslations('Confirm');
   const cancel = confirmation?.kind === 'cancel';
   return (
     <Dialog
       open={confirmation !== null}
-      title={cancel ? t.cancelTitle : t.removeTitle}
+      title={cancel ? t('cancelTitle') : t('removeTitle')}
       onClose={onClose}
       footer={
         <>
-          <Button variant="quiet" onClick={onClose}>{t.cancelNo}</Button>
+          <Button variant="quiet" onClick={onClose}>{t('cancelNo')}</Button>
           <Button
             variant="danger"
             onClick={() => {
@@ -30,15 +30,15 @@ export function ConfirmDialog({ confirmation, onConfirm, onClose }: {
               setDeleteFiles(false);
             }}
           >
-            {cancel ? t.cancelYes : t.removeYes}
+            {cancel ? t('cancelYes') : t('removeYes')}
           </Button>
         </>
       }
     >
       {confirmation && (
         <>
-          <p className="m-0 text-body-sm text-ink">{cancel ? t.cancelBody(confirmation.name) : t.removeBody(confirmation.name)}</p>
-          {!cancel && <Checkbox label={t.removeFiles} checked={deleteFiles} onChange={(e) => setDeleteFiles(e.target.checked)} />}
+          <p className="m-0 text-body-sm text-ink">{cancel ? t('cancelBody', { name: confirmation.name }) : t('removeBody', { name: confirmation.name })}</p>
+          {!cancel && <Checkbox label={t('removeFiles')} checked={deleteFiles} onChange={(e) => setDeleteFiles(e.target.checked)} />}
         </>
       )}
     </Dialog>
