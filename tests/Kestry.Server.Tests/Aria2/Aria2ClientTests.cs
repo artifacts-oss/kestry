@@ -15,6 +15,7 @@ public class Aria2ClientTests
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
             LastUri = request.RequestUri;
+            Assert.NotNull(request.Content!.Headers.ContentLength); // aria2 cannot parse chunked request bodies
             var json = JsonDocument.Parse(await request.Content!.ReadAsStringAsync(ct)).RootElement.Clone();
             Requests.Add(json);
             var (status, body) = respond(json);
@@ -73,7 +74,7 @@ public class Aria2ClientTests
         Assert.Equal(1000, s.TotalLength);
         Assert.Equal(250, s.CompletedLength);
         Assert.Equal(4, s.Connections);
-        Assert.Equal(["g2"], s.FollowedBy);
+        Assert.Equal(["g2"], s.FollowedBy!);
         Assert.Equal("/d/a", s.Files.Single().Path);
         Assert.Equal("Ubuntu", s.BitTorrent!.Info!.Name);
     }

@@ -32,7 +32,9 @@ public sealed class Aria2Client(HttpClient http, Aria2Runtime runtime)
 
     public async Task<JsonElement> CallAsync(Call call, CancellationToken ct = default)
     {
-        using var response = await http.PostAsJsonAsync(Url, Request(call), ct);
+        // aria2's HTTP server rejects chunked bodies, so send a string (Content-Length) instead of PostAsJsonAsync.
+        using var content = new StringContent(Request(call).ToJsonString(), System.Text.Encoding.UTF8, "application/json");
+        using var response = await http.PostAsync(Url, content, ct);
         // aria2 reports RPC errors with a non-2xx status and a JSON body.
         var body = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
         if (body.TryGetProperty("error", out var error)) ThrowIfError(error);

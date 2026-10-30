@@ -34,6 +34,12 @@ public sealed record Aria2File
     public string Path { get; init; } = "";
     public long Length { get; init; }
     public long CompletedLength { get; init; }
+    public Aria2Uri[] Uris { get; init; } = [];
+}
+
+public sealed record Aria2Uri
+{
+    public string Uri { get; init; } = "";
 }
 
 public sealed record Aria2BitTorrent

@@ -1,20 +1,22 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Kestry.Server.Tests;
 
-public class HealthTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class HealthTests : IClassFixture<KestryFactory>
 {
-    [Fact]
-    public async Task Health_returns_ok()
-    {
-        var client = factory.CreateClient();
+    private readonly KestryFactory _factory;
 
-        var response = await client.GetAsync("/health");
+    public HealthTests(KestryFactory factory) => _factory = factory;
+
+    [Fact]
+    public async Task Health_returns_ok_with_the_aria2_state()
+    {
+        var response = await _factory.CreateClient().GetAsync("/health");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
         Assert.Equal("ok", body!["status"]);
+        Assert.Contains(body["aria2"], new[] { "installing", "running", "restarting", "down" });
     }
 }
