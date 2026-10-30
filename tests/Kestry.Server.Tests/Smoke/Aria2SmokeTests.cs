@@ -82,6 +82,56 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
     }
 
     [Aria2Fact]
+    public async Task Snapshot_lists_a_live_download()
+    {
+        var gid = await Downloads.AddUriAsync($"{_files.BaseUrl}/slow.bin", subfolder: "snapshot");
+        await WaitAsync(async () => (await Aria2.TellStatusAsync(gid)).CompletedLength > 0, "the download to start");
+
+        var snapshot = await _factory.CreateClient().GetFromJsonAsync<System.Text.Json.JsonElement>("/api/downloads");
+
+        var row = snapshot.GetProperty("downloads").EnumerateArray().Single(d => d.GetProperty("gid").GetString() == gid);
+        Assert.Equal("downloading", row.GetProperty("status").GetString());
+        Assert.Equal("slow.bin", row.GetProperty("name").GetString());
+        Assert.Equal("http", row.GetProperty("source").GetString());
+        Assert.True(row.GetProperty("downloaded").GetInt64() > 0);
+        await _factory.CreateClient().DeleteAsync($"/api/downloads/{gid}?deleteFiles=true");
+    }
+
+    [Aria2Fact]
+    public async Task Pasted_links_are_added_and_duplicates_of_existing_downloads_are_skipped()
+    {
+        var http = _factory.CreateClient();
+        var text = $"{_files.BaseUrl}/small.bin?a=1\n{_files.BaseUrl}/small.bin?a=1\nnot-a-link\n# comment";
+
+        var first = await (await http.PostAsJsonAsync("/api/downloads/links", new { text, subfolder = "pasted", paused = true }))
+            .Content.ReadFromJsonAsync<DownloadEndpoints.LinksResponse>();
+
+        Assert.Equal((1, 1, 1), (first!.Added, first.Duplicates, first.Invalid));
+        Assert.Equal(["added", "duplicate", "invalid"], first.Links.Select(l => l.State));
+        var added = first.Links[0];
+        Assert.Equal("paused", (await Aria2.TellStatusAsync(added.Gid!)).Status);
+
+        // The same link again is now a duplicate of an existing download.
+        var second = await (await http.PostAsJsonAsync("/api/downloads/links", new { text = $"{_files.BaseUrl}/small.bin?a=1" }))
+            .Content.ReadFromJsonAsync<DownloadEndpoints.LinksResponse>();
+        Assert.Equal(["duplicate"], second!.Links.Select(l => l.State));
+
+        var preview = await (await http.PostAsJsonAsync("/api/downloads/links/preview", new { text = $"{_files.BaseUrl}/small.bin?a=1\n{_files.BaseUrl}/new.bin" }))
+            .Content.ReadFromJsonAsync<DownloadEndpoints.LinksResponse>();
+        Assert.Equal((1, 1, 0), (preview!.Added, preview.Duplicates, preview.Invalid));
+    }
+
+    [Aria2Fact]
+    public async Task Links_requests_are_validated()
+    {
+        var http = _factory.CreateClient();
+
+        Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsJsonAsync("/api/downloads/links", new { text = "  " })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsJsonAsync("/api/downloads/links", new { text = new string('a', DownloadEndpoints.MaxLinksTextLength + 1) })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsJsonAsync("/api/downloads/links", new { text = "http://a.com/x", subfolder = "../escape" })).StatusCode);
+    }
+
+    [Aria2Fact]
     public async Task Unknown_gid_is_a_404()
     {
         var response = await _factory.CreateClient().PostAsync("/api/downloads/0000000000000000/pause", null);

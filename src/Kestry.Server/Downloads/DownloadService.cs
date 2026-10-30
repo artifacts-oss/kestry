@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Kestry.Server.Aria2;
 using Kestry.Server.Settings;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,21 @@ public sealed class DownloadService(
 
     public Task<string> AddTorrentAsync(byte[] torrent, string? subfolder = null, bool paused = false, CancellationToken ct = default) =>
         aria2.AddTorrentAsync(torrent, AddOptions(subfolder, paused), ct);
+
+    /// <summary>Duplicate-detection keys (URLs and info-hashes) of every download aria2 currently knows.</summary>
+    public async Task<HashSet<string>> ExistingKeysAsync(CancellationToken ct = default)
+    {
+        var results = await aria2.MulticallAsync(
+            [Aria2Client.TellActive(), Aria2Client.TellWaiting(0, 1000), Aria2Client.TellStopped(-1, 1000)], ct);
+        var keys = new HashSet<string>();
+        foreach (var status in results.SelectMany(r => r.Deserialize<List<Aria2Status>>(Aria2Json.Options) ?? []))
+        {
+            if (status.InfoHash is { Length: > 0 } hash) keys.Add("btih:" + hash.ToLowerInvariant());
+            foreach (var uri in status.Files.SelectMany(f => f.Uris))
+                if (LinkParser.KeyOf(uri.Uri) is { } key) keys.Add(key);
+        }
+        return keys;
+    }
 
     public Task PauseAsync(string gid, CancellationToken ct = default) => aria2.PauseAsync(gid, ct);
     public Task ResumeAsync(string gid, CancellationToken ct = default) => aria2.UnpauseAsync(gid, ct);
