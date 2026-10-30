@@ -19,6 +19,7 @@ export function Switch({ checked, onChange, label, disabled, className }: Switch
         checked={checked}
         onCheckedChange={onChange}
         disabled={disabled}
+        title={label}
         className={cx(
           'group relative w-10 h-6 p-0 border border-line-strong rounded-full bg-surface-200 cursor-pointer transition-colors',
           'data-[state=checked]:bg-slate-600 data-[state=checked]:border-slate-600',

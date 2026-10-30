@@ -77,6 +77,13 @@ describe('Switch', () => {
   });
 });
 
+describe('Switch tooltip', () => {
+  it('keeps its label as a tooltip when the visible label is hidden (mobile header)', () => {
+    render(<Switch checked={false} label="Apagar" />);
+    expect(screen.getByRole('switch', { name: 'Apagar' })).toHaveAttribute('title', 'Apagar');
+  });
+});
+
 describe('Segmented', () => {
   it('selects an option', async () => {
     function Harness() {
