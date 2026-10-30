@@ -73,8 +73,9 @@ public class SnapshotMapperTests
     [Fact]
     public void Failed_downloads_carry_the_aria2_error()
     {
-        var s = St("g", "error", "/d/a") with { ErrorMessage = "File not found" };
+        var s = St("g", "error", "/d/a") with { ErrorMessage = "File not found", ErrorCode = 3 };
         Assert.Equal("File not found", One(s).Error);
+        Assert.Equal(3, One(s).ErrorCode);
     }
 
     [Fact]

@@ -15,12 +15,12 @@ public static class SettingsEndpoints
             {
                 // Turning the option on where it cannot work would silently do nothing: say so.
                 if (requested.ShutdownWhenDone && !settings.Current.ShutdownWhenDone && !shutdown.Available)
-                    throw new SettingsValidationException(new Dictionary<string, string> { ["shutdownWhenDone"] = "Shutting down is not available on this server." });
+                    throw new SettingsValidationException(new Dictionary<string, ErrorBody> { ["shutdownWhenDone"] = new(ErrorCodes.ShutdownUnavailable, "Shutting down is not available on this server.") });
                 return Results.Ok(await settings.UpdateAsync(requested, ct));
             }
             catch (SettingsValidationException ex)
             {
-                return Results.BadRequest(new { error = "Invalid settings", errors = ex.Errors });
+                return Results.BadRequest(new { code = ErrorCodes.SettingsInvalid, error = "Invalid settings", errors = ex.Errors });
             }
         });
 

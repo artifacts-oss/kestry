@@ -139,6 +139,7 @@ public class SettingsServiceTests : IDisposable
         var ex = await Assert.ThrowsAsync<SettingsValidationException>(() => service.UpdateAsync(service.Current with { MaxConcurrentDownloads = value }));
 
         Assert.Contains(field, ex.Errors.Keys);
+        Assert.Equal(ErrorCodes.MaxConcurrentRange, ex.Errors[field].Code);
         Assert.Equal(3, service.Current.MaxConcurrentDownloads);
         Assert.Equal(0, service.Version);
     }
@@ -154,6 +155,7 @@ public class SettingsServiceTests : IDisposable
         var ex = await Assert.ThrowsAsync<SettingsValidationException>(() => service.UpdateAsync(service.Current with { DownloadDir = dir }));
 
         Assert.Contains("downloadDir", ex.Errors.Keys);
+        Assert.Equal(dir == "/etc" ? ErrorCodes.DirOutsideRoots : ErrorCodes.DirNotAbsolute, ex.Errors["downloadDir"].Code);
     }
 
     [Fact]
@@ -174,7 +176,7 @@ public class SettingsServiceTests : IDisposable
 
         var ex = await Assert.ThrowsAsync<SettingsValidationException>(() => service.UpdateAsync(service.Current with { DownloadDir = Path.Combine(Downloads, "file", "sub") }));
 
-        Assert.Contains("downloadDir", ex.Errors.Keys);
+        Assert.Equal(ErrorCodes.DirNotWritable, ex.Errors["downloadDir"].Code);
     }
 
     [Theory]

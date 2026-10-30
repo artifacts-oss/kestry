@@ -21,10 +21,10 @@ public sealed class RequestGuard(RequestDelegate next, IOptions<KestryOptions> o
     {
         if (!ctx.Request.Path.StartsWithSegments("/api")) return next(ctx);
 
-        if (!HostAllowed(ctx.Request.Host)) return Reject(ctx, "Host not allowed. Add its origin to Kestry:AllowedOrigins.");
+        if (!HostAllowed(ctx.Request.Host)) return Reject(ctx, ErrorCodes.HostNotAllowed, "Host not allowed. Add its origin to Kestry:AllowedOrigins.");
         if (!HttpMethods.IsGet(ctx.Request.Method) && !HttpMethods.IsHead(ctx.Request.Method) && !HttpMethods.IsOptions(ctx.Request.Method)
             && ctx.Request.Headers.Origin.ToString() is { Length: > 0 } origin && !OriginAllowed(origin, ctx.Request))
-            return Reject(ctx, "Origin not allowed. Add it to Kestry:AllowedOrigins.");
+            return Reject(ctx, ErrorCodes.OriginNotAllowed, "Origin not allowed. Add it to Kestry:AllowedOrigins.");
 
         return next(ctx);
     }
@@ -45,9 +45,9 @@ public sealed class RequestGuard(RequestDelegate next, IOptions<KestryOptions> o
         return normalized == $"{request.Scheme}://{request.Host}".ToLowerInvariant() || _allowedOrigins.Contains(normalized);
     }
 
-    private static Task Reject(HttpContext ctx, string message)
+    private static Task Reject(HttpContext ctx, string code, string message)
     {
         ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-        return ctx.Response.WriteAsJsonAsync(new { error = message });
+        return ctx.Response.WriteAsJsonAsync(new ErrorBody(code, message));
     }
 }

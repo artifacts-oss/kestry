@@ -68,9 +68,11 @@ public class SettingsSmokeTests(KestryFactory factory) : IClassFixture<KestryFac
         var response = await http.PutAsJsonAsync("/api/settings", current with { MaxConcurrentDownloads = 99, DownloadDir = "/etc" });
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        var errors = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("errors");
-        Assert.True(errors.TryGetProperty("maxConcurrentDownloads", out _));
-        Assert.True(errors.TryGetProperty("downloadDir", out _));
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(ErrorCodes.SettingsInvalid, body.GetProperty("code").GetString());
+        var errors = body.GetProperty("errors");
+        Assert.Equal(ErrorCodes.MaxConcurrentRange, errors.GetProperty("maxConcurrentDownloads").GetProperty("code").GetString());
+        Assert.Equal(ErrorCodes.DirOutsideRoots, errors.GetProperty("downloadDir").GetProperty("code").GetString());
         Assert.Equal(current.MaxConcurrentDownloads, (await http.GetFromJsonAsync<AppSettings>("/api/settings"))!.MaxConcurrentDownloads);
     }
 

@@ -128,9 +128,17 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
     {
         var http = _factory.CreateClient();
 
-        Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsJsonAsync("/api/downloads/links", new { text = "  " })).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsJsonAsync("/api/downloads/links", new { text = new string('a', DownloadEndpoints.MaxLinksTextLength + 1) })).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsJsonAsync("/api/downloads/links", new { text = "http://a.com/x", subfolder = "../escape" })).StatusCode);
+        async Task AssertBadRequest(object body, string code)
+        {
+            var response = await http.PostAsJsonAsync("/api/downloads/links", body);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(code, (await response.Content.ReadFromJsonAsync<ErrorBody>())!.Code);
+        }
+
+        await AssertBadRequest(new { text = "  " }, ErrorCodes.LinksEmpty);
+        await AssertBadRequest(new { text = new string('a', DownloadEndpoints.MaxLinksTextLength + 1) }, ErrorCodes.LinksTooLarge);
+        await AssertBadRequest(new { text = string.Join('\n', Enumerable.Repeat("a", DownloadEndpoints.MaxLinks + 2)) }, ErrorCodes.LinksTooMany);
+        await AssertBadRequest(new { text = "http://a.com/x", subfolder = "../escape" }, ErrorCodes.InvalidSubfolder);
     }
 
     [Aria2Fact]
@@ -139,6 +147,7 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
         var response = await _factory.CreateClient().PostAsync("/api/downloads/0000000000000000/pause", null);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(ErrorCodes.NotFound, (await response.Content.ReadFromJsonAsync<ErrorBody>())!.Code);
     }
 
     [Aria2Fact]
@@ -156,6 +165,8 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var results = (await response.Content.ReadFromJsonAsync<DownloadEndpoints.TorrentResult[]>())!;
         Assert.Equal(["added", "invalid", "invalid"], results.Select(r => r.Status));
+        Assert.Equal(ErrorCodes.TorrentsInvalid, results[1].Error!.Code);
+        Assert.Equal(ErrorCodes.TorrentsInvalid, results[2].Error!.Code); // wrong extension
         var status = await Aria2.TellStatusAsync(results[0].Gid!);
         Assert.Equal("paused", status.Status);
     }

@@ -14,11 +14,11 @@ public static class DownloadEndpoints
     public const int MaxLinks = 2000;
 
     public record LinksRequest(string? Text, string? Subfolder, bool? Paused);
-    public record LinkResult(string Text, string Kind, string State, string? Gid = null, string? Error = null);
+    public record LinkResult(string Text, string Kind, string State, string? Gid = null, ErrorBody? Error = null);
     /// <summary>Valid counts links that can be added (preview) or were added (POST /links).</summary>
     public record LinksResponse(IReadOnlyList<LinkResult> Links, int Valid, int Duplicates, int Invalid);
 
-    public record TorrentResult(string Name, string Status, string? Gid = null, string? Error = null);
+    public record TorrentResult(string Name, string Status, string? Gid = null, ErrorBody? Error = null);
 
     public static void MapDownloadEndpoints(this IEndpointRouteBuilder app)
     {
@@ -49,7 +49,7 @@ public static class DownloadEndpoints
                 }
                 catch (Aria2Exception ex)
                 {
-                    results.Add(new(link.Text, kind, "invalid", Error: ex.Message));
+                    results.Add(new(link.Text, kind, "invalid", Error: Aria2Failure(ex)));
                 }
             }
             return Results.Ok(Summarize(results));
@@ -57,13 +57,18 @@ public static class DownloadEndpoints
 
         api.MapPost("/torrents", async (IFormFileCollection files, string? subfolder, bool? paused, DownloadService svc, CancellationToken ct) =>
         {
-            if (files.Count is 0 or > MaxTorrentFiles) return Results.BadRequest(new { error = $"Send between 1 and {MaxTorrentFiles} .torrent files." });
+            if (files.Count is 0 or > MaxTorrentFiles) return ApiErrors.BadRequest(new(ErrorCodes.TorrentsCount, $"Send between 1 and {MaxTorrentFiles} .torrent files.", new Dictionary<string, object> { ["max"] = MaxTorrentFiles }));
             var results = new List<TorrentResult>();
             foreach (var file in files)
             {
-                if (file.Length is 0 or > MaxTorrentBytes || !file.FileName.EndsWith(".torrent", StringComparison.OrdinalIgnoreCase))
+                if (file.Length == 0 || !file.FileName.EndsWith(".torrent", StringComparison.OrdinalIgnoreCase))
                 {
-                    results.Add(new(file.FileName, "invalid", Error: $"Only .torrent files up to {MaxTorrentBytes / 1024 / 1024} MB are accepted."));
+                    results.Add(new(file.FileName, "invalid", Error: new(ErrorCodes.TorrentsInvalid, "Not a valid .torrent file.")));
+                    continue;
+                }
+                if (file.Length > MaxTorrentBytes)
+                {
+                    results.Add(new(file.FileName, "invalid", Error: new(ErrorCodes.TorrentsTooLarge, $"Only .torrent files up to {MaxTorrentBytes / 1024 / 1024} MB are accepted.", new Dictionary<string, object> { ["maxMb"] = MaxTorrentBytes / 1024 / 1024 })));
                     continue;
                 }
                 using var ms = new MemoryStream();
@@ -72,7 +77,7 @@ public static class DownloadEndpoints
                 // A .torrent is a bencoded dictionary; cheap sanity check before bothering aria2.
                 if (bytes[0] != (byte)'d')
                 {
-                    results.Add(new(file.FileName, "invalid", Error: "Not a valid .torrent file."));
+                    results.Add(new(file.FileName, "invalid", Error: new(ErrorCodes.TorrentsInvalid, "Not a valid .torrent file.")));
                     continue;
                 }
                 try
@@ -81,7 +86,7 @@ public static class DownloadEndpoints
                 }
                 catch (Aria2Exception ex)
                 {
-                    results.Add(new(file.FileName, "invalid", Error: ex.Message));
+                    results.Add(new(file.FileName, "invalid", Error: Aria2Failure(ex)));
                 }
             }
             return Results.Ok(results);
@@ -102,11 +107,14 @@ public static class DownloadEndpoints
 
     private static IResult? Validate(LinksRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Text)) return Results.BadRequest(new { error = "Paste at least one link." });
-        if (request.Text.Length > MaxLinksTextLength) return Results.BadRequest(new { error = "The pasted text is too large." });
-        if (request.Text.Count(c => c == '\n') > MaxLinks) return Results.BadRequest(new { error = $"At most {MaxLinks} links per request." });
+        if (string.IsNullOrWhiteSpace(request.Text)) return ApiErrors.BadRequest(new(ErrorCodes.LinksEmpty, "Paste at least one link."));
+        if (request.Text.Length > MaxLinksTextLength) return ApiErrors.BadRequest(new(ErrorCodes.LinksTooLarge, "The pasted text is too large."));
+        if (request.Text.Count(c => c == '\n') > MaxLinks) return ApiErrors.BadRequest(new(ErrorCodes.LinksTooMany, $"At most {MaxLinks} links per request.", new Dictionary<string, object> { ["max"] = MaxLinks }));
         return null;
     }
+
+    private static ErrorBody Aria2Failure(Aria2Exception ex) =>
+        new(ErrorCodes.Aria2Error, ex.Message, new Dictionary<string, object> { ["message"] = ex.Message });
 
     private static LinksResponse Summarize(IEnumerable<LinkResult> links)
     {
@@ -122,19 +130,19 @@ public static class DownloadEndpoints
         }
         catch (InvalidDownloadException ex)
         {
-            return Results.BadRequest(new { error = ex.Message });
+            return ApiErrors.BadRequest(new(ex.Code, ex.Message));
         }
         catch (Aria2Exception ex) when (ex.Code == 1) // "GID is not found"
         {
-            return Results.NotFound(new { error = ex.Message });
+            return ApiErrors.Json(StatusCodes.Status404NotFound, new(ErrorCodes.NotFound, ex.Message));
         }
         catch (Aria2Exception ex)
         {
-            return Results.Json(new { error = ex.Message }, statusCode: StatusCodes.Status502BadGateway);
+            return ApiErrors.Json(StatusCodes.Status502BadGateway, Aria2Failure(ex));
         }
         catch (HttpRequestException)
         {
-            return Results.Json(new { error = "aria2 is not available." }, statusCode: StatusCodes.Status503ServiceUnavailable);
+            return ApiErrors.Json(StatusCodes.Status503ServiceUnavailable, new(ErrorCodes.Aria2Unavailable, "aria2 is not available."));
         }
     }
 }

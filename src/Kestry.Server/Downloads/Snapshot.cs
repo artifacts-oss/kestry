@@ -21,6 +21,8 @@ public sealed record DownloadDto
     public bool FetchingMetadata { get; init; }
     /// <summary>Fully downloaded torrent that is still uploading.</summary>
     public bool Seeding { get; init; }
+    /// <summary>aria2's exit code (1–32) when failed, else 0; the UI translates it.</summary>
+    public int ErrorCode { get; init; }
     public string? Error { get; init; }
 }
 

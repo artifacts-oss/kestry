@@ -69,6 +69,7 @@ public static class SnapshotMapper
             Seeders = s.NumSeeders,
             FetchingMetadata = fetchingMetadata,
             Seeding = seeding,
+            ErrorCode = status == "failed" ? s.ErrorCode : 0,
             Error = status == "failed" ? (string.IsNullOrWhiteSpace(s.ErrorMessage) ? null : s.ErrorMessage) : null,
         };
     }

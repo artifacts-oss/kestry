@@ -49,6 +49,7 @@ public class RequestGuardTests(TunnelFactory factory) : IClassFixture<TunnelFact
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         Assert.Contains("AllowedOrigins", await response.Content.ReadAsStringAsync());
+        Assert.Equal(ErrorCodes.HostNotAllowed, (await response.Content.ReadFromJsonAsync<ErrorBody>())!.Code);
     }
 
     [Fact]
@@ -59,8 +60,13 @@ public class RequestGuardTests(TunnelFactory factory) : IClassFixture<TunnelFact
     [InlineData("http://evil.com")]
     [InlineData("http://localhost:9999")] // same host, other port: another app
     [InlineData("null")]
-    public async Task Rejects_mutating_requests_from_foreign_origins(string origin) =>
-        Assert.Equal(HttpStatusCode.Forbidden, await Send(Req(HttpMethod.Post, "/api/shutdown/cancel", origin: origin)));
+    public async Task Rejects_mutating_requests_from_foreign_origins(string origin)
+    {
+        var response = await factory.CreateClient().SendAsync(Req(HttpMethod.Post, "/api/shutdown/cancel", origin: origin));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal(ErrorCodes.OriginNotAllowed, (await response.Content.ReadFromJsonAsync<ErrorBody>())!.Code);
+    }
 
     [Theory]
     [InlineData(null)]                               // curl and other non-browser clients
@@ -103,5 +109,7 @@ public class RequestGuardTests(TunnelFactory factory) : IClassFixture<TunnelFact
         Assert.Equal(HttpStatusCode.OK, ok.StatusCode);
         var results = await ok.Content.ReadFromJsonAsync<DownloadEndpoints.TorrentResult[]>();
         Assert.Equal("invalid", results![0].Status);
+        Assert.Equal(ErrorCodes.TorrentsTooLarge, results[0].Error!.Code);
+        Assert.Equal(2, Convert.ToInt32(results[0].Error!.Params!["maxMb"].ToString()));
     }
 }

@@ -5,7 +5,10 @@ using Microsoft.Extensions.Options;
 
 namespace Kestry.Server.Downloads;
 
-public sealed class InvalidDownloadException(string message) : Exception(message);
+public sealed class InvalidDownloadException(string code, string message) : Exception(message)
+{
+    public string Code { get; } = code;
+}
 
 public sealed class DownloadService(
     Aria2Client aria2,
@@ -17,7 +20,7 @@ public sealed class DownloadService(
     {
         var baseDir = settings.Current.DownloadDir;
         var dir = PathGuard.ResolveSubfolder(baseDir, subfolder)
-            ?? throw new InvalidDownloadException("The subfolder must be relative and stay inside the download folder.");
+            ?? throw new InvalidDownloadException(ErrorCodes.InvalidSubfolder, "The subfolder must be relative and stay inside the download folder.");
         var options = new Dictionary<string, string> { ["dir"] = dir };
         if (paused) options["pause"] = "true";
         return options;
@@ -56,7 +59,7 @@ public sealed class DownloadService(
         var status = await aria2.TellStatusAsync(gid, ct);
         var uris = status.Files.SelectMany(f => f.Uris).Select(u => u.Uri).Distinct().ToArray();
         if (uris.Length == 0 && status.InfoHash is { Length: > 0 } hash) uris = [$"magnet:?xt=urn:btih:{hash}"];
-        if (uris.Length == 0) throw new InvalidDownloadException("This download has no source to retry from.");
+        if (uris.Length == 0) throw new InvalidDownloadException(ErrorCodes.NoSource, "This download has no source to retry from.");
 
         var options = status.Dir is null ? null : new Dictionary<string, string> { ["dir"] = status.Dir };
         var newGid = await aria2.AddUriAsync(uris, options, ct);
