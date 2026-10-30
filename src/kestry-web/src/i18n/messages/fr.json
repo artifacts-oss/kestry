@@ -1,0 +1,224 @@
+{
+  "App": { "name": "Kestry" },
+  "Status": {
+    "downloading": "Téléchargement",
+    "queued": "En attente",
+    "paused": "En pause",
+    "completed": "Terminé",
+    "failed": "Erreur"
+  },
+  "Download": {
+    "progress": "Progression de {name}",
+    "fetchingMetadata": "Récupération des métadonnées…",
+    "waiting": "En attente",
+    "failed": "Le téléchargement a échoué",
+    "sizeOf": "{done} sur {total}",
+    "peers": "{connections, plural, one {# connexion} other {# connexions}} · {seeders, plural, one {# seed} other {# seeds}}"
+  },
+  "Eta": {
+    "seconds": "{n} s restantes",
+    "minutes": "{n} min restantes",
+    "hoursMinutes": "{h} h {m} min restantes"
+  },
+  "Actions": {
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "cancel": "Annuler",
+    "retry": "Réessayer",
+    "remove": "Supprimer",
+    "copyPath": "Copier le chemin",
+    "more": "Plus d'actions",
+    "close": "Fermer",
+    "dismiss": "Ignorer"
+  },
+  "FileDrop": {
+    "prompt": "Déposez des fichiers .torrent ici ou cliquez pour les choisir",
+    "selected": "{count, plural, one {# fichier sélectionné} other {# fichiers sélectionnés}}"
+  },
+  "Filters": {
+    "label": "Filtres",
+    "all": "Tous",
+    "downloading": "Téléchargement",
+    "queued": "En attente",
+    "completed": "Terminés",
+    "failed": "Erreur"
+  },
+  "Dashboard": {
+    "toolbar": "Téléchargements",
+    "search": "Rechercher par nom",
+    "pauseAll": "Tout mettre en pause",
+    "resumeAll": "Tout reprendre",
+    "summary": "{active} en cours · {queued} en attente",
+    "noResults": "Aucun téléchargement ne correspond au filtre",
+    "emptyTitle": "Aucun téléchargement pour l'instant",
+    "emptyDescription": "Collez des liens HTTP ou FTP, des magnets ou des adresses de fichiers .torrent."
+  },
+  "Stats": { "download": "Réception", "upload": "Envoi", "freeDisk": "Espace libre" },
+  "Connection": {
+    "connected": "aria2 {version} connecté",
+    "installing": "Installation d'aria2…",
+    "restarting": "Reconnexion à aria2…",
+    "down": "aria2 ne répond pas",
+    "offline": "Pas de connexion à Kestry"
+  },
+  "Aria2Reasons": {
+    "notFound": "Installez aria2 (apt install aria2, dnf install aria2…) ou indiquez son chemin dans Aria2:Path.",
+    "downloadFailed": "aria2 n'a pas pu être téléchargé. Copiez aria2c.exe dans le dossier de données ou indiquez son chemin dans Aria2:Path.",
+    "checksumMismatch": "Le fichier aria2 téléchargé ne correspond pas au hachage attendu et a été écarté.",
+    "portBusy": "Le port RPC d'aria2 est occupé. Libérez-le ou modifiez Aria2:Port.",
+    "crashed": "aria2 s'est fermé de façon inattendue."
+  },
+  "Confirm": {
+    "cancelTitle": "Annuler le téléchargement",
+    "cancelBody": "« {name} » sera arrêté et ses fichiers partiels supprimés.",
+    "cancelYes": "Annuler le téléchargement",
+    "cancelNo": "Retour",
+    "removeTitle": "Supprimer de la liste",
+    "removeBody": "« {name} » sera retiré de la liste.",
+    "removeFiles": "Supprimer aussi les fichiers",
+    "removeYes": "Supprimer"
+  },
+  "Toasts": {
+    "completed": "Téléchargement terminé : {name}",
+    "failed": "Échec : {name}",
+    "added": "{count, plural, one {# téléchargement ajouté} other {# téléchargements ajoutés}}",
+    "pathCopied": "Chemin copié",
+    "retried": "Téléchargement relancé",
+    "removed": "Téléchargement supprimé",
+    "cancelled": "Téléchargement annulé",
+    "requestFailed": "L'action n'a pas pu être effectuée"
+  },
+  "Add": {
+    "button": "Ajouter",
+    "title": "Ajouter des téléchargements",
+    "linksLabel": "Liens",
+    "linksPlaceholder": "https://…\nmagnet:?xt=urn:btih:…\nhttps://…/fichier.torrent",
+    "linksHint": "Un par ligne. Les liens HTTP, HTTPS, FTP, les magnets et les adresses de fichiers .torrent sont acceptés.",
+    "advanced": "Options avancées",
+    "subfolder": "Sous-dossier de destination",
+    "subfolderHint": "Relatif au dossier de téléchargements",
+    "paused": "Ajouter en pause",
+    "valid": "{count, plural, one {# valide} other {# valides}}",
+    "duplicates": "{count, plural, one {# doublon} other {# doublons}}",
+    "invalid": "{count, plural, one {# invalide} other {# invalides}}",
+    "invalidList": "Ceux-ci ne seront pas ajoutés :",
+    "submit": "Ajouter",
+    "cancel": "Annuler",
+    "pasteHere": "Collez vos liens ici"
+  },
+  "Header": {
+    "speedLimit": "Limite de vitesse",
+    "shutdown": "Éteindre à la fin",
+    "settings": "Réglages"
+  },
+  "Settings": {
+    "title": "Réglages",
+    "maxConcurrent": "Téléchargements simultanés",
+    "speedLimit": "Limite de vitesse activée",
+    "downloadLimit": "Limite de réception",
+    "uploadLimit": "Limite d'envoi (torrents)",
+    "unit": "Unité",
+    "downloadDir": "Dossier de téléchargements",
+    "downloadDirHint": "N'affecte que les nouveaux téléchargements",
+    "shutdown": "Éteindre quand tout est terminé",
+    "shutdownUnavailable": {
+      "disabled": "L'administrateur a désactivé l'extinction sur ce serveur.",
+      "container": "Indisponible : Kestry s'exécute dans un conteneur et ne peut pas éteindre la machine.",
+      "unsupported": "Indisponible sur ce système d'exploitation."
+    },
+    "seeding": "Continuer à partager les torrents une fois terminés",
+    "seedRatio": "Ratio de partage",
+    "theme": "Thème",
+    "themes": { "light": "Clair", "dark": "Sombre", "system": "Système" },
+    "saveFailed": "Les réglages n'ont pas pu être enregistrés"
+  },
+  "ShutdownBanner": {
+    "message": "La machine s'éteindra dans {seconds} s",
+    "cancel": "Annuler l'extinction",
+    "cancelled": "Extinction annulée"
+  },
+  "Errors": {
+    "request": {
+      "hostNotAllowed": "Cette adresse n'est pas autorisée. Ajoutez son origine à Kestry:AllowedOrigins.",
+      "originNotAllowed": "Cette origine n'est pas autorisée. Ajoutez-la à Kestry:AllowedOrigins.",
+      "tooLarge": "La requête est trop volumineuse."
+    },
+    "links": {
+      "empty": "Collez au moins un lien.",
+      "tooLarge": "Le texte collé est trop volumineux.",
+      "tooMany": "Au plus {max} liens par requête."
+    },
+    "torrents": {
+      "count": "Envoyez entre 1 et {max} fichiers .torrent.",
+      "tooLarge": "Seuls les fichiers .torrent jusqu'à {maxMb} Mo sont acceptés.",
+      "invalid": "Ce n'est pas un fichier .torrent valide."
+    },
+    "downloads": {
+      "invalidSubfolder": "Le sous-dossier doit être relatif et rester dans le dossier de téléchargements.",
+      "noSource": "Ce téléchargement n'a pas de source pour réessayer.",
+      "notFound": "Le téléchargement n'existe plus."
+    },
+    "aria2": {
+      "error": "aria2 a signalé une erreur : {message}",
+      "unavailable": "aria2 n'est pas disponible pour le moment."
+    },
+    "settings": {
+      "invalid": "Les réglages ne sont pas valides.",
+      "maxConcurrentDownloads": {
+        "range": "Doit être compris entre 1 et 20"
+      },
+      "limit": {
+        "min": "Doit être d'au moins 1 KB/s"
+      },
+      "seedRatio": {
+        "range": "Doit être compris entre 0,1 et 100"
+      },
+      "downloadDir": {
+        "notAbsolute": "Doit être un chemin absolu",
+        "outsideRoots": "Doit se trouver dans l'un des dossiers autorisés",
+        "notWritable": "Le dossier ne peut pas être créé ou n'est pas accessible en écriture"
+      },
+      "shutdownWhenDone": {
+        "unavailable": "L'extinction n'est pas disponible sur ce serveur"
+      }
+    }
+  },
+  "Aria2Errors": {
+    "1": "Erreur inconnue",
+    "2": "Délai de connexion dépassé",
+    "3": "Ressource introuvable",
+    "4": "Trop de réponses « introuvable » ; aria2 a abandonné",
+    "5": "La vitesse de téléchargement était trop faible",
+    "6": "Un problème réseau est survenu",
+    "7": "Des téléchargements étaient inachevés à la fermeture d'aria2",
+    "8": "Le serveur ne permet pas la reprise",
+    "9": "Espace disque insuffisant",
+    "10": "La taille des pièces diffère du fichier de contrôle existant",
+    "11": "Le même fichier est déjà en cours de téléchargement",
+    "12": "Le même torrent est déjà en cours de téléchargement",
+    "13": "Le fichier existe déjà",
+    "14": "Le renommage du fichier a échoué",
+    "15": "Le fichier existant n'a pas pu être ouvert",
+    "16": "Le fichier n'a pas pu être créé ou tronqué",
+    "17": "Erreur de lecture ou d'écriture du fichier",
+    "18": "Le dossier n'a pas pu être créé",
+    "19": "Échec de la résolution de noms",
+    "20": "Le document Metalink n'a pas pu être analysé",
+    "21": "La commande FTP a échoué",
+    "22": "Réponse HTTP inattendue",
+    "23": "Trop de redirections",
+    "24": "Échec de l'autorisation HTTP",
+    "25": "Les données bencode n'ont pas pu être analysées",
+    "26": "Le fichier .torrent est corrompu ou incomplet",
+    "27": "Le lien magnet n'est pas valide",
+    "28": "Option non valide",
+    "29": "Le serveur distant est surchargé",
+    "30": "La requête JSON-RPC n'a pas pu être analysée",
+    "32": "Échec de la vérification du checksum"
+  },
+  "LocaleSwitcher": {
+    "title": "Choisir la langue",
+    "trigger": "Changer de langue",
+    "options": { "en": "Anglais", "es": "Espagnol", "de": "Allemand", "fr": "Français" }
+  }
+}

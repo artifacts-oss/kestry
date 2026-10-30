@@ -1,0 +1,130 @@
+/* Derived from design/kestrel/tokens.json (Kestrel v1). */
+@import "tailwindcss";
+
+:root {
+  --surface-000: #faf7f2;
+  --surface-100: #f3eee6;
+  --surface-200: #e9e2d7;
+  --line: #dcd3c5;
+  --line-strong: #8e8577;
+  --ink: #24282e;
+  --ink-muted: #5b636e;
+  --slate-600: #4d5f77;
+  --slate-700: #3c4b5f;
+  --slate-100: #e1e7ee;
+  --on-slate: #ffffff;
+  --rufous-500: #c47647;
+  --rufous-700: #9c4f28;
+  --rufous-100: #f5e6da;
+  --on-rufous: #ffffff;
+  --sand: #e6d2bb;
+  --cere: #e0832f;
+  --moss: #43674a;
+  --danger: #a83a32;
+  --on-danger: #ffffff;
+  --focus: #4d5f77;
+  --mark: #24282e;
+  --kestrel-shadow-soft: 0 1px 2px rgba(36,40,46,0.06), 0 8px 24px rgba(36,40,46,0.08);
+  color-scheme: light;
+}
+
+.dark {
+  --surface-000: #1a1d21;
+  --surface-100: #22262b;
+  --surface-200: #2c3138;
+  --line: #3b414a;
+  --line-strong: #6b7380;
+  --ink: #f1ece4;
+  --ink-muted: #a8b0bb;
+  --slate-600: #93a7c1;
+  --slate-700: #b4c4d8;
+  --slate-100: #2a3340;
+  --on-slate: #1a1d21;
+  --rufous-500: #d68a5e;
+  --rufous-700: #e3a07a;
+  --rufous-100: #3b2b22;
+  --on-rufous: #1a1d21;
+  --sand: #cbb093;
+  --cere: #f0994d;
+  --moss: #8fbb92;
+  --danger: #ec8a80;
+  --on-danger: #1a1d21;
+  --focus: #93a7c1;
+  --mark: #1a1d21;
+  --kestrel-shadow-soft: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-surface-000: var(--surface-000);
+  --color-surface-100: var(--surface-100);
+  --color-surface-200: var(--surface-200);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-slate-600: var(--slate-600);
+  --color-slate-700: var(--slate-700);
+  --color-slate-100: var(--slate-100);
+  --color-on-slate: var(--on-slate);
+  --color-rufous-500: var(--rufous-500);
+  --color-rufous-700: var(--rufous-700);
+  --color-rufous-100: var(--rufous-100);
+  --color-on-rufous: var(--on-rufous);
+  --color-sand: var(--sand);
+  --color-cere: var(--cere);
+  --color-moss: var(--moss);
+  --color-danger: var(--danger);
+  --color-on-danger: var(--on-danger);
+  --color-focus: var(--focus);
+  --color-mark: var(--mark);
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --shadow-soft: var(--kestrel-shadow-soft);
+}
+
+@theme {
+  --text-*: initial;
+  --text-display: 56px;
+  --text-display--line-height: 60px;
+  --text-display--font-weight: 400;
+  --text-display--letter-spacing: -0.02em;
+  --text-heading-1: 36px;
+  --text-heading-1--line-height: 44px;
+  --text-heading-1--font-weight: 500;
+  --text-heading-1--letter-spacing: -0.01em;
+  --text-heading-2: 22px;
+  --text-heading-2--line-height: 30px;
+  --text-heading-2--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 22px;
+  --text-label: 13px;
+  --text-label--line-height: 16px;
+  --text-label--font-weight: 600;
+  --text-label--letter-spacing: 0.02em;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--font-weight: 500;
+  --text-caption--letter-spacing: 0.04em;
+  --text-mono: 13px;
+  --text-mono--line-height: 20px;
+  --animate-slide: slide 1.4s ease-in-out infinite;
+  @keyframes slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(340%); }
+  }
+}
+
+@layer base {
+  html { font-family: var(--font-sans); background: var(--surface-000); color: var(--ink); }
+  body { margin: 0; font-size: 14px; line-height: 22px; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+}

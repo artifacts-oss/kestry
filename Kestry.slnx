@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Kestry.Server/Kestry.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Kestry.Server.Tests/Kestry.Server.Tests.csproj" />
+  </Folder>
+</Solution>

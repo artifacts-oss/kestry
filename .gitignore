@@ -1,0 +1,13 @@
+bin/
+obj/
+node_modules/
+data/
+src/Kestry.Server/wwwroot/
+src/kestry-web/dist/
+coverage/
+*.user
+.vs/
+artifacts/
+docker/.env
+docker/data/
+docker/downloads/
