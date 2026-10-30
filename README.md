@@ -119,7 +119,7 @@ Errors are JSON `{ "code": "links.tooMany", "error": "English text", "params": {
 
 ## Limits (v1)
 
-No users/permissions, torrent search/RSS, streaming, `sftp://` links, queue reordering, bulk selection or per-download detail panel. The ideas for later are listed in `docs/PLAN-es.md` §15.
+No users/permissions, torrent search/RSS, streaming, `sftp://` links, queue reordering, bulk selection or per-download detail panel. The ideas for later are listed in `docs/PLAN-en.md` §15.
 
 ## License
 
