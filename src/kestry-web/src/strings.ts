@@ -13,6 +13,7 @@ export const strings = {
   waiting: 'En espera',
   downloadFailed: 'La descarga ha fallado',
   of: 'de',
+  sources: { http: 'HTTP', https: 'HTTPS', ftp: 'FTP', torrent: 'Torrent', magnet: 'Magnet' },
   perSecond: '/s',
   etaLeft: {
     seconds: (n: number) => `quedan ${n} s`,
