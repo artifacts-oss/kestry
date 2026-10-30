@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Download, Snapshot } from '../api/types';
 import { api } from '../api/client';
@@ -13,6 +13,9 @@ vi.mock('../api/client', () => ({
     remove: vi.fn().mockResolvedValue(undefined),
     pauseAll: vi.fn().mockResolvedValue(undefined),
     resumeAll: vi.fn().mockResolvedValue(undefined),
+    previewLinks: vi.fn().mockResolvedValue({ links: [], valid: 0, duplicates: 0, invalid: 0 }),
+    addLinks: vi.fn(),
+    addTorrents: vi.fn(),
   },
 }));
 
@@ -131,6 +134,44 @@ describe('DownloadsPage', () => {
     rerender(<ToastProvider><DownloadsPage snapshot={snap([d('a', 'completed')])} connected aria2Version="1.37.0" /></ToastProvider>);
     // The provider is re-created by rerender, so the toast lands in the new tree.
     expect(screen.getByText('Descarga completada: a.bin')).toBeInTheDocument();
+  });
+});
+
+const paste = (text: string, target: Element = document.body) => {
+  const event = new Event('paste', { bubbles: true, cancelable: true });
+  Object.defineProperty(event, 'clipboardData', { value: { getData: () => text } });
+  target.dispatchEvent(event);
+  return event;
+};
+
+describe('adding downloads', () => {
+  it('opens the dialog from the toolbar and from the empty state', async () => {
+    const { unmount } = renderPage(snap(all));
+    await userEvent.click(screen.getByRole('button', { name: 'Añadir' }));
+    expect(screen.getByRole('dialog', { name: 'Añadir descargas' })).toBeInTheDocument();
+    unmount();
+
+    renderPage(snap([]));
+    await userEvent.click(screen.getByRole('button', { name: 'Pega tus enlaces aquí' }));
+    expect(screen.getByRole('dialog', { name: 'Añadir descargas' })).toBeInTheDocument();
+  });
+
+  it('pasting outside a text field opens the dialog with the text', async () => {
+    renderPage(snap(all));
+    act(() => { paste('https://a.com/file.zip'); });
+    expect(await screen.findByLabelText('Enlaces')).toHaveValue('https://a.com/file.zip');
+  });
+
+  it('pasting into the search box does not open the dialog', () => {
+    renderPage(snap(all));
+    paste('https://a.com/file.zip', screen.getByRole('textbox', { name: 'Buscar por nombre' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('pasting empty text does nothing', () => {
+    renderPage(snap(all));
+    paste('   ');
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
 

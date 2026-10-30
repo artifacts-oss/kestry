@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client';
 import type { Download, Snapshot } from '../api/types';
+import { AddDownloadsModal } from '../components/AddDownloadsModal';
 import { ConfirmDialog, type Confirmation } from '../components/ConfirmDialog';
 import { Header } from '../components/Header';
 import { DownloadsList } from '../components/DownloadsList';
@@ -16,6 +17,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
   const toast = useToast();
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
+  const [adding, setAdding] = useState<string | null>(null); // null = closed, otherwise the initial text
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const downloads = useMemo(() => snapshot?.downloads ?? [], [snapshot]);
 
@@ -47,6 +49,20 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new snapshot should produce toasts
   }, [snapshot]);
 
+  // Pasting outside a text field opens the add dialog with the clipboard text.
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (adding !== null || target?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return;
+      const text = e.clipboardData?.getData('text') ?? '';
+      if (!text.trim()) return;
+      e.preventDefault();
+      setAdding(text);
+    };
+    document.addEventListener('paste', onPaste);
+    return () => document.removeEventListener('paste', onPaste);
+  }, [adding]);
+
   const visible = filterDownloads(downloads, filter, query);
   const { active, queued } = summarize(downloads);
 
@@ -61,11 +77,16 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
           <Toolbar.Spacer />
           <Button variant="quiet" icon="pause" onClick={() => run(api.pauseAll)}>{strings.pauseAll}</Button>
           <Button variant="quiet" icon="play" onClick={() => run(api.resumeAll)}>{strings.resumeAll}</Button>
+          <Button variant="primary" icon="plus" onClick={() => setAdding('')}>{strings.add.button}</Button>
         </Toolbar>
         <div className="flex flex-col gap-4 p-4 lg:px-12 lg:py-8">
           {downloads.length > 0 && <p className="m-0 text-body-sm text-ink-muted">{strings.summary(active, queued)}</p>}
           {downloads.length === 0 ? (
-            <EmptyState title={strings.empty.title} description={strings.empty.description} />
+            <EmptyState
+              title={strings.empty.title}
+              description={strings.empty.description}
+              action={<Button variant="primary" icon="plus" className="h-12 px-6" onClick={() => setAdding('')}>{strings.add.pasteHere}</Button>}
+            />
           ) : visible.length === 0 ? (
             <p className="m-0 py-8 text-center text-body-sm text-ink-muted">{strings.noResults}</p>
           ) : (
@@ -84,6 +105,7 @@ export function DownloadsPage({ snapshot, connected, aria2Version }: { snapshot:
         </div>
       </main>
       </div>
+      <AddDownloadsModal open={adding !== null} initialText={adding ?? ''} onClose={() => setAdding(null)} />
       <ConfirmDialog
         confirmation={confirmation}
         onClose={() => setConfirmation(null)}

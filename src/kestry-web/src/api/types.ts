@@ -36,3 +36,28 @@ export interface SystemInfo {
   version: string;
   aria2Version: string | null;
 }
+
+export type LinkState = 'valid' | 'duplicate' | 'invalid' | 'added';
+
+export interface LinkResult {
+  text: string;
+  kind: 'http' | 'ftp' | 'magnet' | 'torrenturl' | 'invalid';
+  state: LinkState;
+  gid?: string;
+  error?: string;
+}
+
+/** `valid` counts links that can be added (preview) or were added (add). */
+export interface LinksResponse {
+  links: LinkResult[];
+  valid: number;
+  duplicates: number;
+  invalid: number;
+}
+
+export interface TorrentResult {
+  name: string;
+  status: 'added' | 'invalid';
+  gid?: string;
+  error?: string;
+}

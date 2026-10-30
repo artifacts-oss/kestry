@@ -12,7 +12,8 @@ public static class DownloadEndpoints
 
     public record LinksRequest(string? Text, string? Subfolder, bool? Paused);
     public record LinkResult(string Text, string Kind, string State, string? Gid = null, string? Error = null);
-    public record LinksResponse(IReadOnlyList<LinkResult> Links, int Added, int Duplicates, int Invalid);
+    /// <summary>Valid counts links that can be added (preview) or were added (POST /links).</summary>
+    public record LinksResponse(IReadOnlyList<LinkResult> Links, int Valid, int Duplicates, int Invalid);
 
     public record TorrentResult(string Name, string Status, string? Gid = null, string? Error = null);
 

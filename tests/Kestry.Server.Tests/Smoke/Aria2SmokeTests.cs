@@ -106,7 +106,7 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
         var first = await (await http.PostAsJsonAsync("/api/downloads/links", new { text, subfolder = "pasted", paused = true }))
             .Content.ReadFromJsonAsync<DownloadEndpoints.LinksResponse>();
 
-        Assert.Equal((1, 1, 1), (first!.Added, first.Duplicates, first.Invalid));
+        Assert.Equal((1, 1, 1), (first!.Valid, first.Duplicates, first.Invalid));
         Assert.Equal(["added", "duplicate", "invalid"], first.Links.Select(l => l.State));
         var added = first.Links[0];
         Assert.Equal("paused", (await Aria2.TellStatusAsync(added.Gid!)).Status);
@@ -118,7 +118,7 @@ public class Aria2SmokeTests : IClassFixture<KestryFactory>, IAsyncLifetime
 
         var preview = await (await http.PostAsJsonAsync("/api/downloads/links/preview", new { text = $"{_files.BaseUrl}/small.bin?a=1\n{_files.BaseUrl}/new.bin" }))
             .Content.ReadFromJsonAsync<DownloadEndpoints.LinksResponse>();
-        Assert.Equal((1, 1, 0), (preview!.Added, preview.Duplicates, preview.Invalid));
+        Assert.Equal((1, 1, 0), (preview!.Valid, preview.Duplicates, preview.Invalid));
     }
 
     [Aria2Fact]
