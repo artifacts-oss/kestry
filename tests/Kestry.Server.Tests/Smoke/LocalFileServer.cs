@@ -25,7 +25,16 @@ public sealed class LocalFileServer : IAsyncDisposable
         app.MapGet("/small.bin", () => Results.File(Small, "application/octet-stream"));
         app.MapGet("/slow.bin", async (HttpContext ctx) =>
         {
-            ctx.Response.ContentLength = 50 * 1024 * 1024;
+            // Honour "Range: bytes=N-" so aria2 can resume after a pause instead of failing on a full 200 reply.
+            const long total = 50 * 1024 * 1024;
+            long start = 0;
+            if (ctx.Request.Headers.Range.ToString() is { Length: > 0 } range && long.TryParse(range.Replace("bytes=", "").TrimEnd('-'), out start))
+            {
+                ctx.Response.StatusCode = StatusCodes.Status206PartialContent;
+                ctx.Response.Headers.ContentRange = $"bytes {start}-{total - 1}/{total}";
+            }
+            ctx.Response.Headers.AcceptRanges = "bytes";
+            ctx.Response.ContentLength = total - start;
             var chunk = new byte[16 * 1024];
             try
             {

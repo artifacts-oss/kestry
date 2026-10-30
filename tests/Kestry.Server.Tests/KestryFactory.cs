@@ -10,6 +10,8 @@ namespace Kestry.Server.Tests;
 /// <summary>Hosts Kestry with its data, downloads and aria2 ports isolated in a temp folder.</summary>
 public sealed class KestryFactory : WebApplicationFactory<Program>
 {
+    private bool _stopped;
+
     public string Root { get; } = Directory.CreateTempSubdirectory("kestry-it").FullName;
     public string DownloadDir => Path.Combine(Root, "downloads");
     public int Aria2Port { get; } = FreePort();
@@ -33,7 +35,11 @@ public sealed class KestryFactory : WebApplicationFactory<Program>
     protected override void Dispose(bool disposing)
     {
         // Stop gracefully so the aria2 child process never outlives the test.
-        if (disposing && Services.GetService<IHost>() is { } host) host.StopAsync().GetAwaiter().GetResult();
+        if (disposing && !_stopped)
+        {
+            _stopped = true;
+            Services.GetService<IHost>()?.StopAsync().GetAwaiter().GetResult();
+        }
         base.Dispose(disposing);
         if (disposing) try { Directory.Delete(Root, recursive: true); } catch (IOException) { /* aria2 may still hold a file */ }
     }

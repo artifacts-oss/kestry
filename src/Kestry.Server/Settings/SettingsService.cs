@@ -21,4 +21,7 @@ public sealed class SettingsService
     }
 
     public AppSettings Current { get; private set; }
+
+    /// <summary>Bumped on every save so other browser tabs know to reload the settings.</summary>
+    public int Version { get; private set; }
 }

@@ -20,6 +20,9 @@ builder.Services.AddSingleton(sp => new Aria2Locator(
     ct => Aria2Locator.DownloadPinnedAsync(sp.GetRequiredService<IHttpClientFactory>().CreateClient("aria2-download"), ct)));
 builder.Services.AddHttpClient("aria2-download", c => c.Timeout = TimeSpan.FromMinutes(5));
 builder.Services.AddSingleton<DownloadService>();
+builder.Services.AddSingleton<SnapshotBuilder>();
+builder.Services.AddSingleton<SnapshotHub>();
+builder.Services.AddHostedService<DownloadMonitor>();
 builder.Services.AddSingleton<Aria2ProcessManager>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<Aria2ProcessManager>());
 
@@ -32,6 +35,7 @@ app.MapGet("/health", (Aria2Runtime aria2) => Results.Json(new
 }));
 
 app.MapDownloadEndpoints();
+app.MapEvents();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
