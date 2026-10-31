@@ -6,7 +6,7 @@ using Kestry.Server.Shutdown;
 namespace Kestry.Server.Downloads;
 
 /// <summary>Queries aria2 once (a single system.multicall) and assembles the snapshot sent to the UI.</summary>
-public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, SettingsService settings, ShutdownService shutdown, ILogger<SnapshotBuilder> log)
+public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, DownloadHistory history, SettingsService settings, ShutdownService shutdown, ILogger<SnapshotBuilder> log)
 {
     private const int PageSize = 1000;
 
@@ -27,7 +27,8 @@ public sealed class SnapshotBuilder(Aria2Client aria2, Aria2Runtime runtime, Set
                     Aria2Client.GlobalStat(),
                 ], ct);
                 List<Aria2Status> Read(JsonElement e) => e.Deserialize<List<Aria2Status>>(Aria2Json.Options) ?? [];
-                downloads = SnapshotMapper.Map(Read(r[0]), Read(r[1]), Read(r[2]));
+                var (active, waiting) = (Read(r[0]), Read(r[1]));
+                downloads = SnapshotMapper.Map(active, waiting, history.Merge(active, waiting, Read(r[2])));
                 stat = r[3].Deserialize<Aria2GlobalStat>(Aria2Json.Options) ?? stat;
             }
             catch (Exception ex) when (ex is HttpRequestException or Aria2Exception or TaskCanceledException && !ct.IsCancellationRequested)

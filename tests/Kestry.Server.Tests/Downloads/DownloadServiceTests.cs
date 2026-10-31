@@ -11,12 +11,14 @@ public class DownloadServiceTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("kestry-dl").FullName;
     private readonly FakeAria2 _aria2 = new();
+    private readonly DownloadHistory _history;
     private readonly DownloadService _service;
 
     public DownloadServiceTests()
     {
         var options = TestSettings.Options(_root);
-        _service = new DownloadService(_aria2.Client, TestSettings.Create(_root, _aria2.Client), options, NullLogger<DownloadService>.Instance);
+        _history = new DownloadHistory(options, NullLogger<DownloadHistory>.Instance);
+        _service = new DownloadService(_aria2.Client, TestSettings.Create(_root, _aria2.Client), _history, options, NullLogger<DownloadService>.Instance);
     }
 
     public void Dispose() => Directory.Delete(_root, recursive: true);
@@ -136,5 +138,63 @@ public class DownloadServiceTests : IDisposable
         _aria2.On("aria2.tellStatus", """{"gid":"g1","status":"error","files":[]}""");
 
         await Assert.ThrowsAsync<InvalidDownloadException>(() => _service.RetryAsync("g1"));
+    }
+
+    private Aria2Status Remember(string status, string file)
+    {
+        var s = System.Text.Json.JsonSerializer.Deserialize<Aria2Status>(StatusJson(status, Downloads, file), Aria2Json.Options)!;
+        _history.Merge([], [], [s]);
+        return s;
+    }
+
+    [Fact]
+    public async Task Remove_a_download_only_in_the_history_forgets_it_and_deletes_its_files()
+    {
+        var file = File_("a.bin");
+        Remember("complete", file);
+        _aria2.NotFound("aria2.tellStatus").NotFound("aria2.removeDownloadResult");
+
+        await _service.RemoveAsync("g1", deleteFiles: true);
+
+        Assert.Empty(_history.Entries);
+        Assert.False(File.Exists(file));
+    }
+
+    [Fact]
+    public async Task Remove_an_unknown_download_is_still_not_found()
+    {
+        _aria2.NotFound("aria2.tellStatus");
+
+        Assert.Equal(1, (await Assert.ThrowsAsync<Aria2Exception>(() => _service.RemoveAsync("g1", deleteFiles: false))).Code);
+    }
+
+    [Fact]
+    public async Task Retry_a_failed_download_only_in_the_history_re_adds_it()
+    {
+        Remember("error", "/x/a.bin");
+        _aria2.NotFound("aria2.tellStatus").NotFound("aria2.removeDownloadResult").On("aria2.addUri", "\"g2\"");
+
+        Assert.Equal("g2", await _service.RetryAsync("g1"));
+        Assert.Empty(_history.Entries);
+    }
+
+    [Fact]
+    public async Task Purge_also_clears_the_history()
+    {
+        Remember("complete", "/x/a.bin");
+
+        await _service.PurgeAsync();
+
+        Assert.Empty(_history.Entries);
+        Assert.Equal(["aria2.purgeDownloadResult"], _aria2.Methods);
+    }
+
+    [Fact]
+    public async Task Links_in_the_history_count_as_duplicates()
+    {
+        Remember("complete", "/x/a.bin");
+        _aria2.On("system.multicall", "[[[]],[[]],[[]]]");
+
+        Assert.Contains(LinkParser.KeyOf("http://x/a.bin")!, await _service.ExistingKeysAsync());
     }
 }
