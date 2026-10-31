@@ -4,7 +4,7 @@
 
 # Kestry
 
-A self-hosted download manager for torrents, magnet links and direct links (HTTP/HTTPS/FTP). It runs on a home PC or server, uses [aria2](https://aria2.github.io/) as the download engine, and is managed from any browser with a live, responsive UI built on the *Kestrel* design system, which is part of this project (not an external library).
+A self-hosted download manager for torrents, magnet links and direct links (HTTP/HTTPS/FTP). It runs on a home PC or server, uses [aria2](https://aria2.github.io/) as the download engine, and is managed from any browser with a live, responsive UI built on the *Kestrel* design system, which is part of this project.
 
 - Paste a whole list of links (one per line) and add them in a click; drop `.torrent` files too.
 - Several downloads at once, the rest queued; pause, resume, retry, cancel.
