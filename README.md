@@ -24,7 +24,7 @@ mkdir -p data downloads
 docker compose up -d --build
 ```
 
-Open <http://localhost:8080>. The port is published on `127.0.0.1` only. The image bundles aria2 and runs as a non-root user (use `user:` in the compose file to match the owner of the mounted folders). Forward `6881` TCP/UDP on your router for better BitTorrent speeds.
+Open <http://localhost:8080>. The port is published on `127.0.0.1` only; to reach it from other devices on your network set `KESTRY_BIND` in `docker/.env` to the server's LAN IP (e.g. `192.168.1.50`) and open `http://192.168.1.50:8080`. There is no login, so anyone on that network can use it; never forward `8080` on your router. The image bundles aria2 and runs as a non-root user (use `user:` in the compose file to match the owner of the mounted folders). Forward `6881` TCP/UDP on your router for better BitTorrent speeds.
 
 ### Binary (Windows / Linux)
 
