@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     # To match the owner of the mounted folders: user: "1000:1000"
     ports:
-      - "127.0.0.1:8080:8080"   # the UI is only reachable from this machine unless you change this
+      - "${KESTRY_BIND:-127.0.0.1}:8080:8080"   # only this machine unless KESTRY_BIND is set (see .env.example)
       - "6881:6881/tcp"         # BitTorrent and DHT: forward these on your router for better speeds
       - "6881:6881/udp"
     volumes:
