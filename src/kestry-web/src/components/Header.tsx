@@ -15,9 +15,9 @@ export function Header({ settings, shutdownAvailable, onToggle, onOpenSettings }
   const app = useTranslations('App');
   return (
     <header className="flex items-center gap-3 px-4 py-3 bg-surface-000 border-b border-line">
-      {/* Reserved slot until the logo exists. */}
-      <div aria-hidden className="size-9 rounded-md bg-slate-100" />
-      <span className="font-display text-heading-2 font-medium text-ink">{app('name')}</span>
+      {/* The `.dark` class (not the OS setting) picks the variant, so the theme toggle is honoured. */}
+      <img src="/logo/kestry-logo-horizontal.svg" alt={app('name')} className="h-8 w-auto dark:hidden" />
+      <img src="/logo/kestry-logo-horizontal-light.svg" alt="" aria-hidden className="hidden h-8 w-auto dark:block" />
       <span className="flex-1" />
       {settings && (
         <>

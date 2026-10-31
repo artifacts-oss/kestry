@@ -128,6 +128,13 @@ describe('Header', () => {
     expect(onOpenSettings).toHaveBeenCalled();
   });
 
+  it('shows the horizontal logo, with a dark-theme variant hidden from assistive tech', () => {
+    render(<Header settings={settings} shutdownAvailable onToggle={vi.fn()} onOpenSettings={vi.fn()} />);
+
+    expect(screen.getByRole('img', { name: 'Kestry' })).toHaveAttribute('src', '/logo/kestry-logo-horizontal.svg');
+    expect(document.querySelector('img[src="/logo/kestry-logo-horizontal-light.svg"]')).toHaveAttribute('aria-hidden', 'true');
+  });
+
   it('disables the shutdown switch when unavailable', () => {
     render(<Header settings={settings} shutdownAvailable={false} onToggle={() => {}} onOpenSettings={() => {}} />);
     expect(screen.getByRole('switch', { name: 'Apagar al terminar' })).toBeDisabled();
