@@ -22,7 +22,7 @@ public class MonitorTests : IDisposable
         var fake = new FakeAria2();
         var settings = TestSettings.Create(_root, fake.Client, _runtime);
         var shutdown = new ShutdownService(settings, TestSettings.Options(_root), new FakePower(), fake.Client, _runtime, _time, NullLogger<ShutdownService>.Instance, inContainer: false);
-        var builder = new SnapshotBuilder(fake.Client, _runtime, settings, shutdown, NullLogger<SnapshotBuilder>.Instance);
+        var builder = new SnapshotBuilder(fake.Client, _runtime, new DownloadHistory(TestSettings.Options(_root), NullLogger<DownloadHistory>.Instance), settings, shutdown, NullLogger<SnapshotBuilder>.Instance);
         _monitor = new DownloadMonitor(builder, _hub, shutdown, settings, _runtime, _time, NullLogger<DownloadMonitor>.Instance);
     }
 

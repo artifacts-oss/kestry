@@ -27,7 +27,7 @@ tests/Kestry.Server.Tests xUnit; `Smoke/` runs against a real aria2c
 docker/  deploy/  scripts/  .github/workflows/
 ```
 
-Data flow: aria2 is the single source of truth. `DownloadMonitor` polls it once per second (one `system.multicall`) while a browser is connected or shutdown is armed, publishes a snapshot through `SnapshotHub`, and `/api/events` streams it as SSE. The UI derives toasts by diffing snapshots.
+Data flow: aria2 is the single source of truth. `DownloadMonitor` polls it once per second (one `system.multicall`) while a browser is connected or shutdown is armed, publishes a snapshot through `SnapshotHub`, and `/api/events` streams it as SSE. The UI derives toasts by diffing snapshots. Exception: aria2's session only keeps unfinished downloads, so finished results are mirrored to `DataDir/history.json` (`DownloadHistory`, merged into each snapshot and recorded on graceful stop); remove/retry/purge must also update it.
 
 ## Commands
 
@@ -55,6 +55,7 @@ Toolchain: .NET SDK 10, Node 22, `aria2c` 1.37+. Docker image build: `docker bui
 ## Gotchas learned the hard way
 
 - **aria2 RPC**: send bodies with `Content-Length` (it cannot parse chunked, so no `PostAsJsonAsync`). `system.multicall` takes **no** top-level token; put the token inside each sub-call. A bare `string[]` passed to `params object[]` is treated as the params array itself (see `Aria2Client.TellActive`).
+- **`--save-session`** drops completed downloads (`--force-save` would re-queue removed ones and keep `.aria2` files); that is why `DownloadHistory` exists.
 - **Seeding**: `--seed-ratio=0` means *seed forever*. "Seeding off" is `seed-time=0` (`SettingsService.ToAria2Options`, shared by startup args and hot-apply).
 - **`Urls`** in `appsettings.json` beats `ASPNETCORE_URLS`; override with the `Urls` env var (the Dockerfile does).
 - **Content root** is `AppContext.BaseDirectory` (so `wwwroot/`, `appsettings.json` and the relative `DataDir` resolve next to the executable, also as a service). The csproj copies `wwwroot/` to the build output.

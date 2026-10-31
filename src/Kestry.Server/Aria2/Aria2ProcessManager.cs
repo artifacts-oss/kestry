@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using Kestry.Server.Downloads;
 using Kestry.Server.Settings;
 using Microsoft.Extensions.Options;
 
@@ -12,6 +13,7 @@ public sealed class Aria2ProcessManager(
     Aria2Client client,
     Aria2Runtime runtime,
     SettingsService settings,
+    SnapshotBuilder snapshots,
     IOptions<KestryOptions> kestry,
     IOptions<Aria2Options> aria2,
     TimeProvider time,
@@ -193,6 +195,8 @@ public sealed class Aria2ProcessManager(
         try
         {
             await client.SaveSessionAsync(grace.Token);
+            // Building a snapshot records finished downloads in the history, even when no browser was watching.
+            await snapshots.BuildAsync(grace.Token);
             await client.ShutdownAsync(grace.Token);
             await p.WaitForExitAsync(grace.Token);
         }

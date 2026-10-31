@@ -42,6 +42,7 @@ builder.Services.AddSingleton(sp => new ShutdownService(
     sp.GetRequiredService<ILogger<ShutdownService>>(),
     // The official .NET images set this variable; /.dockerenv covers other container builds.
     inContainer: Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true" || File.Exists("/.dockerenv")));
+builder.Services.AddSingleton<DownloadHistory>();
 builder.Services.AddSingleton<DownloadService>();
 builder.Services.AddSingleton<SnapshotBuilder>();
 builder.Services.AddSingleton<SnapshotHub>();

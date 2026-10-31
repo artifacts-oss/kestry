@@ -57,7 +57,7 @@ cd ../.. && dotnet run --project src/Kestry.Server
 | Key | Default | Meaning |
 |-----|---------|---------|
 | `Urls` | `http://127.0.0.1:8080` | Where Kestry listens. Only loopback by default; the Docker image uses `http://+:8080` (and the compose file publishes it on `127.0.0.1`). Set it with the `Urls` variable, not `ASPNETCORE_URLS`. |
-| `Kestry:DataDir` | `./data` (next to the executable) | `settings.json`, `aria2.session`, downloaded aria2 binary |
+| `Kestry:DataDir` | `./data` (next to the executable) | `settings.json`, `aria2.session`, `history.json` (finished downloads), downloaded aria2 binary |
 | `Kestry:AllowedRoots` | `[]` (= `~/Downloads/Kestry`) | The only folders the download folder may be in, and where files may be deleted. Docker sets `/downloads`. Not editable from the UI. |
 | `Kestry:AllowShutdown` | `true` | Set `false` to disable "shut down when finished" entirely |
 | `Kestry:AllowedOrigins` | `[]` | Extra origins/hosts accepted, e.g. your tunnel's `https://kestry.example.com` |
