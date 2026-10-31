@@ -120,6 +120,7 @@
     "unit": "Unité",
     "downloadDir": "Dossier de téléchargements",
     "downloadDirHint": "N'affecte que les nouveaux téléchargements",
+    "freeDisk": "{size} libres",
     "shutdown": "Éteindre quand tout est terminé",
     "shutdownUnavailable": {
       "disabled": "L'administrateur a désactivé l'extinction sur ce serveur.",

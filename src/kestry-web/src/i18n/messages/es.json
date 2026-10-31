@@ -120,6 +120,7 @@
     "unit": "Unidad",
     "downloadDir": "Carpeta de descargas",
     "downloadDirHint": "Solo afecta a las descargas nuevas",
+    "freeDisk": "{size} libres",
     "shutdown": "Apagar al terminar todo",
     "shutdownUnavailable": {
       "disabled": "El administrador ha desactivado el apagado en este servidor.",

@@ -120,6 +120,7 @@
     "unit": "Einheit",
     "downloadDir": "Download-Ordner",
     "downloadDirHint": "Betrifft nur neue Downloads",
+    "freeDisk": "{size} frei",
     "shutdown": "Herunterfahren, wenn alles fertig ist",
     "shutdownUnavailable": {
       "disabled": "Der Administrator hat das Herunterfahren auf diesem Server deaktiviert.",

@@ -80,6 +80,11 @@ describe('SettingsDrawer', () => {
     expect(dir).toHaveValue('  /etc  '); // the draft is kept as typed so the user can fix it
   });
 
+  it('shows the free space of the download folder under its field', () => {
+    render(<SettingsDrawer open onClose={() => {}} settings={settings} system={system} freeDiskBytes={5 * 1024 ** 3} onSave={vi.fn()} />);
+    expect(screen.getByLabelText('Carpeta de descargas')).toHaveAccessibleDescription('Solo afecta a las descargas nuevas · 5.0 GB libres');
+  });
+
   it('only shows the ratio when seeding is on', async () => {
     const { rerender } = render(<SettingsDrawer open onClose={() => {}} settings={settings} system={system} onSave={vi.fn()} />);
     expect(screen.queryByLabelText('Ratio de compartición')).toBeNull();

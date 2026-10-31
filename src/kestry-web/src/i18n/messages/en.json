@@ -120,6 +120,7 @@
     "unit": "Unit",
     "downloadDir": "Downloads folder",
     "downloadDirHint": "Only affects new downloads",
+    "freeDisk": "{size} free",
     "shutdown": "Shut down when everything finishes",
     "shutdownUnavailable": {
       "disabled": "The administrator has disabled shutting down on this server.",

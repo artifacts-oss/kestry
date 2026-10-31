@@ -5,6 +5,7 @@ import { errorText } from '../api/errors';
 import { splitLimit, toKBps, type LimitUnit } from '../settings';
 import { applyTheme, getThemePreference, type ThemePreference } from '../theme';
 import { Select, TextField } from './ui/fields';
+import { formatBytes } from './ui/format';
 import { Drawer } from './ui/overlays';
 import { Segmented } from './ui/Segmented';
 import { Switch } from './ui/Switch';
@@ -42,11 +43,13 @@ const fromDraft = (d: Draft): Partial<AppSettings> => ({
 });
 
 /** Every control saves as soon as it changes (text fields when they lose focus). */
-export function SettingsDrawer({ open, onClose, settings, system, onSave }: {
+export function SettingsDrawer({ open, onClose, settings, system, freeDiskBytes, onSave }: {
   open: boolean;
   onClose: () => void;
   settings: AppSettings | null;
   system: SystemInfo | null;
+  /** Free space on the volume of the saved download folder (from the snapshot). */
+  freeDiskBytes?: number | null;
   onSave: (next: AppSettings) => Promise<Record<string, ErrorBody>>;
 }) {
   const t = useTranslations('Settings');
@@ -100,7 +103,7 @@ export function SettingsDrawer({ open, onClose, settings, system, onSave }: {
       </div>
 
       <TextField
-        mono label={t('downloadDir')} hint={t('downloadDirHint')}
+        mono label={t('downloadDir')} hint={freeDiskBytes == null ? t('downloadDirHint') : `${t('downloadDirHint')} · ${t('freeDisk', { size: formatBytes(freeDiskBytes) })}`}
         value={draft.dir} error={err('downloadDir')}
         onChange={(e) => update({ dir: e.target.value })} onBlur={() => commitDraft()}
       />

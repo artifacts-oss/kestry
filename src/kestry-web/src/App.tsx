@@ -45,7 +45,7 @@ function Shell() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
       <DownloadsPage snapshot={snapshot} connected={connected} aria2Version={system?.aria2Version ?? null} />
-      <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} settings={settings} system={system} onSave={saveSafely} />
+      <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} settings={settings} system={system} freeDiskBytes={snapshot?.stats.freeDiskBytes} onSave={saveSafely} />
     </div>
   );
 }
