@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { api } from './api/client';
 import type { AppSettings, Snapshot } from './api/types';
+import { STALE_MS } from './api/useSnapshot';
 import { App } from './App';
 
 vi.mock('./api/client', async (orig) => ({
@@ -59,6 +60,24 @@ describe('App', () => {
     const source = FakeEventSource.last;
     unmount();
     expect(source.closed).toBe(true);
+  });
+
+  it('reopens the event stream when it goes quiet', () => {
+    vi.useFakeTimers();
+    try {
+      render(<App />);
+      const first = FakeEventSource.last;
+      act(() => first.emit(snapshot()));
+      act(() => vi.advanceTimersByTime(STALE_MS - 1000));
+      expect(FakeEventSource.last).toBe(first);
+
+      act(() => vi.advanceTimersByTime(2000));
+      expect(first.closed).toBe(true);
+      expect(FakeEventSource.last).not.toBe(first);
+      expect(FakeEventSource.last.url).toBe('/api/events');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('the header speed switch saves the settings', async () => {
