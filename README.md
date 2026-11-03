@@ -21,6 +21,7 @@ A self-hosted download manager for torrents, magnet links and direct links (HTTP
 ```bash
 cd docker
 mkdir -p data downloads
+sudo chown -R 1654:1654 data downloads   # the image runs as uid 1654; otherwise aria2 fails with permission denied
 docker compose up -d --build
 ```
 
