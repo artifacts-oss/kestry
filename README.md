@@ -104,7 +104,7 @@ Kestry__AllowedOrigins__0=http://localhost:5173 dotnet run --project src/Kestry.
 cd src/kestry-web && npm run dev         # http://localhost:5173
 ```
 
-See [AGENTS.md](AGENTS.md) for the architecture, conventions and pitfalls. CI (`.github/workflows/ci.yml`) runs both test suites, the frontend build, a Docker build and the self-contained publish for `win-x64`, `linux-x64` and `linux-arm64`; pushing a `v*` tag publishes the multi-arch image and zips (`release.yml`).
+See [AGENTS.md](AGENTS.md) for the architecture, conventions and pitfalls. CI (`.github/workflows/ci.yml`) runs both test suites, the frontend build, a Docker build and the self-contained publish for `win-x64`, `linux-x64` and `linux-arm64`; publishing a GitHub release with a `vX.Y.Z` tag pushes the multi-arch image to GHCR and Docker Hub (`<DOCKERHUB_USERNAME>/kestry`, tags `X.Y.Z`, `X.Y`, `latest`) and attaches the zips to the release (`release.yml`; needs the `DOCKERHUB_USERNAME` Actions variable and `DOCKERHUB_TOKEN` secret, a Docker Hub access token with read & write).
 
 ### API
 
