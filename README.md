@@ -40,6 +40,16 @@ docker run -d --name kestry --restart unless-stopped \
   davidartifacts/kestry:latest
 ```
 
+On Windows (Docker Desktop, PowerShell) no `chown` is needed:
+
+```powershell
+mkdir kestry\data, kestry\downloads; cd kestry
+docker run -d --name kestry --restart unless-stopped `
+  -p 127.0.0.1:8080:8080 -p 6881:6881/tcp -p 6881:6881/udp `
+  -v "${PWD}\data:/data" -v "${PWD}\downloads:/downloads" `
+  davidartifacts/kestry:latest
+```
+
 With Compose, in `docker/docker-compose.yml` delete the `build:` block and set `image: davidartifacts/kestry:latest`, then `docker compose up -d`. To update: `docker compose pull && docker compose up -d` (with `docker run`: pull, then remove and recreate the container; `data/` keeps settings and the queue).
 
 ### Binary (Windows / Linux)
@@ -55,7 +65,23 @@ aria2 is **never bundled**:
 
 Search order: `Aria2:Path` → `PATH` → `<DataDir>/aria2/`.
 
-**As a service**: on Windows, `sc create Kestry binPath= "C:\path\Kestry.Server.exe"` works (the app detects the service manager). On Linux copy `deploy/kestry.service` to `/etc/systemd/system/`, adjust paths/user, then `systemctl enable --now kestry`.
+**As a service** (the app detects the service manager):
+
+- Windows, from an administrator PowerShell (`sc.exe`, since `sc` is an alias of `Set-Content` there). The service runs as LocalSystem, whose default download folder is inside `C:\Windows\System32\config\systemprofile`, so set `Kestry:AllowedRoots` in `appsettings.json` first (e.g. `["D:\\Downloads"]`):
+
+  ```powershell
+  sc.exe create Kestry binPath= "C:\Kestry\Kestry.Server.exe" start= auto
+  sc.exe start Kestry
+  ```
+
+- Linux (systemd), with the zip extracted to `/opt/kestry` and [`deploy/kestry.service`](deploy/kestry.service) from this repository. The `kestry` user needs write access to `/opt/kestry` (`data/`) and a home directory (downloads default to `~/Downloads/Kestry`):
+
+  ```bash
+  sudo useradd --system --create-home --home-dir /var/lib/kestry --shell /usr/sbin/nologin kestry
+  sudo chown -R kestry:kestry /opt/kestry
+  sudo cp kestry.service /etc/systemd/system/
+  sudo systemctl daemon-reload && sudo systemctl enable --now kestry
+  ```
 
 ### From source
 
