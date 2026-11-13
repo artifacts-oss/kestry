@@ -50,11 +50,13 @@ docker run -d --name kestry --restart unless-stopped `
   davidartifacts/kestry:latest
 ```
 
+Both commands publish the UI on this machine only. To reach it from other devices on your network, publish it on the server's LAN IP instead: `-p 192.168.1.50:8080:8080`, then open `http://192.168.1.50:8080` (same warning as above: no login, never forward `8080` on your router).
+
 With Compose, in `docker/docker-compose.yml` delete the `build:` block and set `image: davidartifacts/kestry:latest`, then `docker compose up -d`. To update: `docker compose pull && docker compose up -d` (with `docker run`: pull, then remove and recreate the container; `data/` keeps settings and the queue).
 
 ### Binary (Windows / Linux)
 
-Download the zip for your platform from the releases page (or build it with `scripts/publish.sh`), extract it, and run `Kestry.Server` (`Kestry.Server.exe` on Windows). Keep `wwwroot/` and `appsettings.json` next to the executable. Then open <http://127.0.0.1:8080>.
+Download the zip for your platform from the releases page (or build it with `scripts/publish.sh`), extract it, and run `Kestry.Server` (`Kestry.Server.exe` on Windows). Keep `wwwroot/` and `appsettings.json` next to the executable. Then open <http://127.0.0.1:8080>. It listens on loopback only; for other devices on your network set `Urls` to the server's LAN IP (`Urls=http://192.168.1.50:8080` as an environment variable or in `appsettings.json`).
 
 aria2 is **never bundled**:
 
