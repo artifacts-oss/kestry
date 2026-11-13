@@ -29,6 +29,19 @@ docker compose up -d --build
 
 Open <http://localhost:8080>. The port is published on `127.0.0.1` only; to reach it from other devices on your network set `KESTRY_BIND` in `docker/.env` to the server's LAN IP (e.g. `192.168.1.50`) and open `http://192.168.1.50:8080`. There is no login, so anyone on that network can use it; never forward `8080` on your router. The image bundles aria2 and runs as a non-root user (use `user:` in the compose file to match the owner of the mounted folders). Forward `6881` TCP/UDP on your router for better BitTorrent speeds.
 
+**Prebuilt image from Docker Hub** ([`davidartifacts/kestry`](https://hub.docker.com/r/davidartifacts/kestry), tags `X.Y.Z`, `X.Y`, `latest`; also `ghcr.io/artifacts-oss/kestry`), no clone or build needed:
+
+```bash
+mkdir -p kestry/data kestry/downloads && cd kestry
+sudo chown -R 1654:1654 data downloads
+docker run -d --name kestry --restart unless-stopped \
+  -p 127.0.0.1:8080:8080 -p 6881:6881/tcp -p 6881:6881/udp \
+  -v "$PWD/data:/data" -v "$PWD/downloads:/downloads" \
+  davidartifacts/kestry:latest
+```
+
+With Compose, in `docker/docker-compose.yml` delete the `build:` block and set `image: davidartifacts/kestry:latest`, then `docker compose up -d`. To update: `docker compose pull && docker compose up -d` (with `docker run`: pull, then remove and recreate the container; `data/` keeps settings and the queue).
+
 ### Binary (Windows / Linux)
 
 Download the zip for your platform from the releases page (or build it with `scripts/publish.sh`), extract it, and run `Kestry.Server` (`Kestry.Server.exe` on Windows). Keep `wwwroot/` and `appsettings.json` next to the executable. Then open <http://127.0.0.1:8080>.
