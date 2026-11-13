@@ -104,7 +104,7 @@ Kestry__AllowedOrigins__0=http://localhost:5173 dotnet run --project src/Kestry.
 cd src/kestry-web && npm run dev         # http://localhost:5173
 ```
 
-Consulta [AGENTS.md](AGENTS.md) (en inglés) para la arquitectura, convenciones y trampas. La CI (`.github/workflows/ci.yml`) ejecuta ambas suites de tests, el build del frontend, un build Docker y la publicación self-contained para `win-x64`, `linux-x64` y `linux-arm64`; al publicar una release de GitHub con tag `vX.Y.Z` se sube la imagen multiarquitectura a GHCR y Docker Hub (`<DOCKER_USERNAME>/kestry`, tags `X.Y.Z`, `X.Y`, `latest`) y se adjuntan los zips a la release (`release.yml`; requiere los secrets de organización `DOCKER_USERNAME` y `DOCKER_PASSWORD`, como en daylog; la contraseña es un access token de Docker Hub con lectura y escritura).
+Consulta [AGENTS.md](AGENTS.md) (en inglés) para la arquitectura, convenciones y trampas. La CI (`.github/workflows/ci.yml`) ejecuta ambas suites de tests, el build del frontend, un build Docker y la publicación self-contained para `win-x64`, `linux-x64` y `linux-arm64`; al publicar una release de GitHub con tag `vX.Y.Z` se sube la imagen multiarquitectura a GHCR y Docker Hub (`<DOCKER_USERNAME>/kestry`, tags `X.Y.Z`, `X.Y`, `latest`) y se adjuntan los zips a la release, con el tag como versión de la app (el `<Version>` del csproj es solo el valor por defecto local) (`release.yml`; requiere los secrets de organización `DOCKER_USERNAME` y `DOCKER_PASSWORD`, como en daylog; la contraseña es un access token de Docker Hub con lectura y escritura).
 
 ### API
 
