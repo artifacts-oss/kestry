@@ -4,7 +4,7 @@ Guidance for AI coding agents (and humans) working on Kestry: a web download man
 
 ## Ground rules
 
-- **Language**: code, comments, docs, commit messages and CLI/README text are in **English**. The *UI* is translated (en, es, de, fr; modelled on artifacts-oss/daylog's next-intl setup). Every visible string lives in `src/kestry-web/src/i18n/messages/<locale>.json`; never hard-code UI text in components. Adding or changing a string means updating **all four files** (a test enforces identical keys and placeholders).
+- **Language**: code, comments, docs, commit messages and CLI/README text are in **English**. `README.es.md` is the Spanish translation of `README.md`; change both together. The *UI* is translated (en, es, de, fr; modelled on artifacts-oss/daylog's next-intl setup). Every visible string lives in `src/kestry-web/src/i18n/messages/<locale>.json`; never hard-code UI text in components. Adding or changing a string means updating **all four files** (a test enforces identical keys and placeholders).
 - **Do not edit `docs/`.** It is the original plan (`PLAN-es.md`, English translation `PLAN-en.md`) and the exported Kestrel design system, kept as read-only reference. The project lives at the repo root. `design/kestrel/` is a copy of the export used by tests.
 - Every feature ships with tests. Stage commits separately (one logical change each) and keep the maintainer as author; never add AI co-author trailers.
 - Smallest change that fully solves the task; no speculative options or abstractions.
@@ -65,4 +65,4 @@ Toolchain: .NET SDK 10, Node 22, `aria2c` 1.37+. Docker image build: `docker bui
 
 ## Definition of done
 
-`dotnet test`, `npm test`, `npm run typecheck` and `npm run build` pass; new behavior has tests; user-visible text is in all four `i18n/messages/*.json` files; README/AGENTS updated if commands, config or behavior changed.
+`dotnet test`, `npm test`, `npm run typecheck` and `npm run build` pass; new behavior has tests; user-visible text is in all four `i18n/messages/*.json` files; README (+ `README.es.md`)/AGENTS updated if commands, config or behavior changed.

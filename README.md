@@ -4,6 +4,8 @@
 
 # Kestry
 
+English · [Español](README.es.md)
+
 A self-hosted download manager for torrents, magnet links and direct links (HTTP/HTTPS/FTP). It runs on a home PC or server, uses [aria2](https://aria2.github.io/) as the download engine, and is managed from any browser with a live, responsive UI built on the *Kestrel* design system, which is part of this project.
 
 - Paste a whole list of links (one per line) and add them in a click; drop `.torrent` files too.
@@ -35,8 +37,8 @@ aria2 is **never bundled**:
 
 | Platform | What happens |
 |----------|--------------|
-| Windows | If `aria2c.exe` is not found, Kestry downloads the pinned official release, verifies its SHA-256 and extracts it to `data/aria2/` (the UI shows "Instalando aria2…"). With no internet or a wrong hash nothing is run; copy `aria2c.exe` to `data/aria2/` by hand or set `Aria2:Path`. |
-| Linux | Install it with your package manager (`apt install aria2`, `dnf install aria2`…) or set `Aria2:Path`. Kestry reports "aria2 no responde" with instructions until it is found. |
+| Windows | If `aria2c.exe` is not found, Kestry downloads the pinned official release, verifies its SHA-256 and extracts it to `data/aria2/` (the UI shows "Installing aria2…"). With no internet or a wrong hash nothing is run; copy `aria2c.exe` to `data/aria2/` by hand or set `Aria2:Path`. |
+| Linux | Install it with your package manager (`apt install aria2`, `dnf install aria2`…) or set `Aria2:Path`. Kestry reports "aria2 is not responding" with instructions until it is found. |
 
 Search order: `Aria2:Path` → `PATH` → `<DataDir>/aria2/`.
 
@@ -71,7 +73,7 @@ User settings (concurrency 1–20, speed limits, download folder, seeding, shut-
 
 ## Usage
 
-- **Add**: click *Añadir*, or just press `Ctrl+V` anywhere on the page outside a text field. Separate links with new lines, spaces or commas; lines starting with `#` are ignored. A live summary shows valid, duplicate and invalid links before anything is added. Duplicates are detected within the batch and against existing downloads (by URL or torrent info-hash).
+- **Add**: click *Add*, or just press `Ctrl+V` anywhere on the page outside a text field. Separate links with new lines, spaces or commas; lines starting with `#` are ignored. A live summary shows valid, duplicate and invalid links before anything is added. Duplicates are detected within the batch and against existing downloads (by URL or torrent info-hash).
 - **Rows**: downloading → pause/cancel · paused → resume/cancel · queued → cancel · failed → retry/remove · completed → copy path/remove. *Cancel* deletes partial files; *Remove* optionally deletes the files. Retrying a torrent re-adds it from its magnet.
 - **Shut down when finished**: arms when the queue is empty and at least one download completed in this session (paused downloads and seeding torrents count as pending). A 60 s countdown is shown in every open browser and can be cancelled. On Linux the service user needs permission to power off: install `deploy/50-kestry-poweroff.rules` as a polkit rule (adjust the user). It is unavailable in containers and when `AllowShutdown` is `false`.
 
