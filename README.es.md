@@ -50,11 +50,13 @@ docker run -d --name kestry --restart unless-stopped `
   davidartifacts/kestry:latest
 ```
 
+Ambos comandos publican la interfaz solo en este equipo. Para acceder desde otros dispositivos de tu red, publícala en la IP LAN del servidor: `-p 192.168.1.50:8080:8080`, y abre `http://192.168.1.50:8080` (misma advertencia que arriba: no hay login, nunca redirijas el `8080` en el router).
+
 Con Compose, en `docker/docker-compose.yml` borra el bloque `build:` y pon `image: davidartifacts/kestry:latest`; luego `docker compose up -d`. Para actualizar: `docker compose pull && docker compose up -d` (con `docker run`: haz pull, borra y recrea el contenedor; `data/` conserva los ajustes y la cola).
 
 ### Binario (Windows / Linux)
 
-Descarga el zip de tu plataforma desde la página de releases (o genéralo con `scripts/publish.sh`), descomprímelo y ejecuta `Kestry.Server` (`Kestry.Server.exe` en Windows). Mantén `wwwroot/` y `appsettings.json` junto al ejecutable. Después abre <http://127.0.0.1:8080>.
+Descarga el zip de tu plataforma desde la página de releases (o genéralo con `scripts/publish.sh`), descomprímelo y ejecuta `Kestry.Server` (`Kestry.Server.exe` en Windows). Mantén `wwwroot/` y `appsettings.json` junto al ejecutable. Después abre <http://127.0.0.1:8080>. Escucha solo en loopback; para otros dispositivos de tu red pon en `Urls` la IP LAN del servidor (`Urls=http://192.168.1.50:8080` como variable de entorno o en `appsettings.json`).
 
 aria2 **nunca se incluye**:
 
