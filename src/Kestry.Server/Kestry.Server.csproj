@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Local builds only; releases pass the tag version (-p:Version) via publish.sh and the Dockerfile. -->
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

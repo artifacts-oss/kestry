@@ -35,7 +35,7 @@ Data flow: aria2 is the single source of truth. `DownloadMonitor` polls it once 
 dotnet test                                   # backend (smoke tests need aria2c on PATH, else they are skipped)
 cd src/kestry-web && npm ci && npm test       # frontend (vitest)
 cd src/kestry-web && npm run typecheck && npm run build   # build writes to src/Kestry.Server/wwwroot
-scripts/publish.sh [rid...]                   # self-contained zips into artifacts/
+scripts/publish.sh [rid...]                   # self-contained zips into artifacts/ (VERSION=1.2.3 overrides the csproj <Version>)
 
 # dev: backend and Vite dev server (Vite rewrites Host, so allow its origin)
 Kestry__AllowedOrigins__0=http://localhost:5173 dotnet run --project src/Kestry.Server

@@ -15,6 +15,8 @@ RUN npm run build
 # Runs on the build platform and cross-publishes with -r, so arm64 images are not built under emulation.
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG TARGETARCH
+# Empty keeps the csproj <Version>; the release workflow passes the tag version.
+ARG VERSION=
 WORKDIR /src
 COPY src/Kestry.Server/Kestry.Server.csproj src/Kestry.Server/
 # Docker's TARGETARCH (amd64/arm64) -> .NET runtime identifier
@@ -22,7 +24,7 @@ RUN case "$TARGETARCH" in amd64) echo linux-x64 > /rid;; arm64) echo linux-arm64
     && dotnet restore src/Kestry.Server -r "$(cat /rid)"
 COPY src/Kestry.Server src/Kestry.Server
 COPY --from=web /src/src/Kestry.Server/wwwroot src/Kestry.Server/wwwroot
-RUN dotnet publish src/Kestry.Server -c Release -r "$(cat /rid)" --no-self-contained --no-restore -o /app
+RUN dotnet publish src/Kestry.Server -c Release -r "$(cat /rid)" --no-self-contained --no-restore -o /app ${VERSION:+"-p:Version=$VERSION"}
 
 # --- Runtime ----------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
